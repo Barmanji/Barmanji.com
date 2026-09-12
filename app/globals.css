@@ -1,15 +1,137 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:where(.dark, .dark *):not(:where(.light-scope *)));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+}
+
+@theme {
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-calsans);
+
+  --animate-fade-in: fade-in 3s ease-in-out forwards;
+  --animate-title: title 3s ease-out forwards;
+  --animate-fade-left: fade-left 3s ease-in-out forwards;
+  --animate-fade-right: fade-right 3s ease-in-out forwards;
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0%;
+    }
+    75% {
+      opacity: 0%;
+    }
+    100% {
+      opacity: 100%;
+    }
+  }
+
+  @keyframes fade-left {
+    0% {
+      transform: translateX(100%);
+      opacity: 0%;
+    }
+    30% {
+      transform: translateX(0%);
+      opacity: 100%;
+    }
+    100% {
+      opacity: 0%;
+    }
+  }
+
+  @keyframes fade-right {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0%;
+    }
+    30% {
+      transform: translateX(0%);
+      opacity: 100%;
+    }
+    100% {
+      opacity: 0%;
+    }
+  }
+
+  @keyframes title {
+    0% {
+      line-height: 0%;
+      letter-spacing: 0.25em;
+      opacity: 0;
+    }
+    25% {
+      line-height: 0%;
+      opacity: 0%;
+    }
+    80% {
+      opacity: 100%;
+    }
+    100% {
+      line-height: 100%;
+      opacity: 100%;
+    }
+  }
+}
+
+@layer base {
+  .text-edge-outline {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+  }
+  .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::before {
+    content: "";
+  }
+  .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+    content: "";
+  }
+  .prose-quoteless :where(blockquote p:first-of-type):not(:where([class~="not-prose"], [class~="not-prose"] *))::before {
+    content: none;
+  }
+  .prose-quoteless :where(blockquote p:first-of-type):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+    content: none;
+  }
+}
+
+/* Return visitors: skip the intro animations entirely and remove the divider
+   lines. Unlayered so these win over the Tailwind animate-* utilities. */
+html.barmanji-no-intro .animate-fade-in,
+html.barmanji-no-intro .animate-title,
+html.barmanji-no-intro .animate-fade-left,
+html.barmanji-no-intro .animate-fade-right {
+  animation: none;
+}
+
+html.barmanji-no-intro .intro-line {
+  display: none;
+}
+
+/* Light scope (project slug page toggle): dark-variant styles and dark prose
+   must not leak in. The slug page wraps its content in `.light-scope`. */
+:where(.dark .prose):not(:where(.light-scope *)) {
+  --tw-prose-body: var(--color-zinc-300);
+  --tw-prose-headings: var(--color-zinc-100);
+  --tw-prose-lead: var(--color-zinc-400);
+  --tw-prose-links: var(--color-zinc-100);
+  --tw-prose-bold: var(--color-zinc-100);
+  --tw-prose-counters: var(--color-zinc-400);
+  --tw-prose-bullets: var(--color-zinc-400);
+  --tw-prose-hr: var(--color-zinc-700);
+  --tw-prose-quotes: var(--color-zinc-100);
+  --tw-prose-quote-borders: var(--color-zinc-600);
+  --tw-prose-captions: var(--color-zinc-400);
+  --tw-prose-code: var(--color-zinc-200);
+  --tw-prose-pre-code: var(--color-zinc-200);
+  --tw-prose-pre-bg: var(--color-zinc-900);
+  --tw-prose-th-borders: var(--color-zinc-600);
+  --tw-prose-td-borders: var(--color-zinc-700);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
 @media (prefers-color-scheme: dark) {

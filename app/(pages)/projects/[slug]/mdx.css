@@ -1,0 +1,55 @@
+@reference "../../../globals.css";
+
+[data-rehype-pretty-code-fragment] code {
+    @apply grid min-w-full break-words rounded-none border-0 p-0 text-sm;
+    counter-reset: line;
+    box-decoration-break: clone;
+  }
+  [data-rehype-pretty-code-fragment] .line {
+    @apply px-4 py-1;
+  }
+  [data-rehype-pretty-code-fragment] [data-line-numbers] > .line::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    width: 1rem;
+    margin-right: 1rem;
+    text-align: right;
+    color: gray;
+  }
+  [data-rehype-pretty-code-fragment] .line--highlighted {
+    @apply bg-zinc-700/20;
+  }
+  :where(.dark [data-rehype-pretty-code-fragment] .line--highlighted):not(:where(.light-scope *)) {
+    @apply bg-zinc-700/20;
+  }
+  [data-rehype-pretty-code-fragment] .line-highlighted span {
+    @apply relative;
+  }
+  [data-rehype-pretty-code-fragment] .word--highlighted {
+    @apply rounded-md bg-zinc-700/30 p-1;
+  }
+  :where(.dark [data-rehype-pretty-code-fragment] .word--highlighted):not(:where(.light-scope *)) {
+    @apply bg-zinc-700/30;
+  }
+  [data-rehype-pretty-code-title] {
+    @apply mt-4 py-2 px-4 text-sm font-medium text-zinc-900 dark:text-zinc-100;
+  }
+  [data-rehype-pretty-code-title] + pre {
+    @apply mt-0;
+  }
+
+  [data-rehype-pretty-code-fragment] > pre {
+    @apply mt-0 mb-4 rounded-md border border-zinc-200 dark:border-zinc-800 !bg-zinc-50 dark:!bg-zinc-950;
+  }
+
+  code[data-theme*=" "] span,
+  code[data-theme*=" "] .line {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg);
+  }
+:where(.dark code[data-theme*=" "] span),
+:where(.dark code[data-theme*=" "] .line) {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
