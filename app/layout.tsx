@@ -50,11 +50,6 @@ export const metadata: Metadata = {
     title: "Barmanji",
     card: "summary_large_image",
   },
-  icons: {
-    icon: "/favicon2.png",
-    shortcut: "/favicon2.png",
-    apple: "/favicon2.png",
-  },
 };
 
 export default function RootLayout({
