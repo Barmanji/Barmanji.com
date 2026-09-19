@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import LocalFont from "next/font/local";
-import { Analytics } from "@/components/analytics";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const inter = Inter({
@@ -75,12 +75,12 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('barmanji-has-visited');if(t){document.documentElement.classList.add('barmanji-no-intro')}else{localStorage.setItem('barmanji-has-visited','true')}}catch(e){}})()`,
           }}
         />
-        <Analytics />
       </head>
       <body
         className={`min-h-full flex flex-col bg-black ${process.env.NODE_ENV === "development" ? "debug-screens" : ""}`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
