@@ -1,0 +1,46 @@
+---
+title: V0-clone
+description: Build your imagination, with gipitty
+repository: Barmanji/V0-clone
+url: https://v0-clone-jj.vercel.app/
+date: "2026-10-16"
+published: true
+desktopSupported: true
+---
+
+<iframe
+  src="https://www.youtube.com/embed/IPgyCBnJMaw"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen>
+</iframe>
+
+
+## Part 1: Getting Started
+
+I have started making this app with the supervision of [Suraj Jha](https://github.com/Aestheticsuraj234) and it was going well untill I have realised the instructor wasn't using the latest E2B instance, so the entire project is stale (not working at all).
+
+## Part 2: Fixing
+
+Now I gotta fix the E2B with newer syntax, new template logic, and everything. So I did. Now the app wasn't quite sitting with me right, because even a gemini prompt can build better stuff than this app. So that's where the first idea came to me, to add a message form to know what design and feel user want to go with and it was amazing! The prompt feels fresh, even the lower model are returning decent website and wallah! Took me aound a month to figure it out and make it(kinda slow with free AI models)
+
+## Basic flow & Issues
+
+### First, the pipeline
+
+You type a prompt. `createProject` writes a project and the first `USER` message, the clarifying-question flow optionally rewrites that prompt before the build, and then an Inngest function called `code-agent/run` spins up a persistent E2B sandbox and turns an agent loose in it with four tools: run a terminal command, create or update files, read files, and verify the build with `npx tsc --noEmit`. The agent loops up to ten times and isn't allowed to call it done until TypeScript agrees. Two small Gemini calls then write the chat reply and the fragment title, and the result is saved as an `ASSISTANT` message with its files. That part worked on the first try, which was the last time anything worked on the first try.
+
+### The black rectangle
+
+The preview was fine on localhost and a black rectangle on Vercel. Sandbox up, URL opening fine in a new tab, logs clean. The iframe `src` was built as `http://<sandbox-host>` and the page embedding it was served over HTTPS. Browsers won't embed an insecure frame in a secure page, and they do it without an error you can see — it just renders nothing. One missing character, one very long afternoon. The iframe is lazy now, too, because booting a sandbox for a preview nobody has looked at yet is just warming the room for an empty chair.
+
+### Payments, or: the toast that wasn't there
+
+Clerk shipped a pricing table and a `has({ plan: "pro" })` check, and we used both right up until the plan we actually cared about lived in our own database. So the pricing page became a custom table and the plan check became `hasProAccess()`, which reads `User.Plan`. Razorpay handles the money: the server creates an order and returns the `key_id`, checkout opens in the browser, and the handler sends the payment id, order id, and signature back to `verifyPaymentAndSave`, which checks the signature and flips the plan to `PAID`. Razorpay has no problem calling that handler more than once, so `paymentId` and `orderId` are `@unique` and the save is a no-op on replay. A duplicate payment is a bug; a duplicate year of Pro is a bigger one.
+
+The payment worked and the success toast didn't show up. That had nothing to do with Razorpay. The root layout mounted the base-ui `<Toaster />`, but every `toast()` call in the codebase imported sonner. Sonner had nothing mounted, so it did the only sensible thing: nothing, quietly, for every toast in the app. Mounting sonner's toaster brought the payment toast back and surfaced a few others nobody had noticed were missing. Then it showed up white on a dark app, because a toaster doesn't know what theme you picked unless you tell it. It reads `resolvedTheme` from `next-themes` now and dresses accordingly.
+
+
+
+

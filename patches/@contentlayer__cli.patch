@@ -1,0 +1,21 @@
+diff --git a/dist/commands/_BaseCommand.js b/dist/commands/_BaseCommand.js
+index 5f7892637c185d36d9e489b803d8df450f4f7f1b..d4d4a7a5f09fcd744006e507c2101f69a691c73b 100644
+--- a/dist/commands/_BaseCommand.js
++++ b/dist/commands/_BaseCommand.js
+@@ -17,10 +17,12 @@ export class BaseCommand extends Command {
+         this.verbose = Option.Boolean('--verbose', false, {
+             description: 'More verbose logging and error stack traces',
+         });
+-        this.execute = () => pipe(this.executeSafe(), core.runMain({
+-            tracingServiceName: 'contentlayer-cli',
+-            verbose: this.verbose || process.env.CL_DEBUG !== undefined,
+-        }));
++        this.execute = async () => {
++            await pipe(this.executeSafe(), core.runMain({
++                tracingServiceName: 'contentlayer-cli',
++                verbose: this.verbose || process.env.CL_DEBUG !== undefined,
++            }));
++        };
+         this.clearCacheIfNeeded = () => {
+             const { clearCache } = this;
+             return T.gen(function* ($) {

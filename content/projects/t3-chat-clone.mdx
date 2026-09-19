@@ -1,0 +1,101 @@
+---
+title: T3-Chat-Clone
+description: Chat with free AI here!
+repository: Barmanji/T3-chat-clone
+url: https://t3-chat-clone-jj.vercel.app
+date: "2026-07-18"
+published: true
+desktopSupported: true
+---
+# Building T3 Chat Clone — The Journey
+<img
+     src="https://i.postimg.cc/FHyKbr5k/page.png"
+     alt="Main Page"
+/>
+
+## The Idea
+
+T3 Chat caught my attention as a clean, multi-model AI chat interface. I wanted to rebuild it from scratch — not just as a UI clone, but as a fully functional product with real authentication, persistent chat history, streaming AI responses, and a production-ready deployment pipeline. The goal was to go deep on the full stack, not just the frontend. Made with the help of [Suraj Jha](https://github.com/Aestheticsuraj234)
+
+## The Stack
+
+| Layer | Choice |
+|-------|--------|
+| Framework | Next.js 16 (App Router, Turbopack) |
+| Language | TypeScript |
+| Database | PostgreSQL via Neon |
+| ORM | Prisma 7 with driver adapters (`@prisma/adapter-pg`) |
+| Auth | better-auth (GitHub + Google OAuth) |
+| AI | OpenRouter via Vercel AI SDK |
+| UI | shadcn/ui + Tailwind CSS 4 |
+| State | TanStack React Query |
+| Markdown | streamdown with syntax highlighting (Shiki) |
+| Deployment | Vercel + Docker |
+
+## The Build — Phase by Phase
+
+### Phase 1: Foundation (Prisma + Auth)
+
+Started with the database schema — User, Session, Account, Chat, Message models with cascade deletes. Connected Prisma to Neon PostgreSQL using the driver adapter pattern (`PrismaPg` with a `pg.Pool`). Set up better-auth with GitHub and Google OAuth providers, wired it into a catch-all Next.js route handler at `/api/auth/[...all]`.
+
+Route protection was done entirely through server components — no middleware. `requireAuth()` and `requireUnAuth()` live as server actions and get called in layout files. The `(auth)` route group renders the sign-in page for unauthenticated users, while `(root)` redirects to `/sign-in` if there's no session.
+
+### Phase 2: AI Integration
+
+Connected OpenRouter as the AI provider. The chat endpoint streams responses token-by-token using the Vercel AI SDK's `streamText()` and returns them via Server-Sent Events. On completion, both the user message and AI response get persisted to Postgres.
+
+A separate endpoint fetches available free models from OpenRouter's API and filters by `prompt_price === 0 && completion_price === 0`. The first free model auto-selects on new chats.
+
+### Phase 3: The UI
+
+Built out the chat interface with a resizable sidebar (drag-to-resize, collapse to icons), chat history grouped by date, search functionality, and a model selector dropdown. Used shadcn/ui for base components and pulled in the AI SDK Elements registry for chat-specific components — message rendering, code blocks with Shiki syntax highlighting, mermaid diagram support, and reasoning/thinking displays.
+
+Dark mode was handled by `next-themes` with system preference detection.
+
+### Phase 4: Deployment & Docker
+
+Created a multi-stage Dockerfile (Node 20 Alpine, pnpm, Prisma generate, standalone Next.js output) and deployed to Vercel with `output: "standalone"`.
+
+## Challenges We Faced
+
+### 1. Prisma Client Generation on Vercel
+
+**Problem:** The generated Prisma client lives at `lib/generated/prisma/` (custom output path), and the entire directory is gitignored. On Vercel, the build failed with `Module not found: Can't resolve './generated/prisma/client'` because `prisma generate` was never run during the build.
+
+**Fix:** Added `prisma generate &&` before `next build` in the build script. Simple, but took a while to figure out why it worked locally but not on Vercel.
+
+### 2. Shiki Version Conflict (Type Error)
+
+**Problem:** `@streamdown/code` pinned to `shiki@^3.19.0`, while the project used `shiki@^4.x`. Two different `BundledLanguage` types existed — shiki v3 didn't have `"actionscript"` as a language, but v4 did. TypeScript threw a type mismatch error that blocked the entire build.
+
+**Fix:** Added a `pnpm.overrides` in `pnpm-workspace.yaml` (pnpm v11 moved overrides out of `package.json`) to force all packages to use `shiki@^4.4.3`. One line, build passes.
+
+### 3. CORS Issues with better-auth
+
+**Problem:** GitHub and Google OAuth sign-in failed with CORS errors. The OPTIONS preflight to `/api/auth/sign-in/social` returned 404 — Next.js route handlers don't handle OPTIONS automatically.
+
+**Fix:** Added CORS headers in `next.config.ts` specifically for `/api/auth/:path*` routes, locked to the actual production origin (not `*`). Also changed the `authClient` `baseURL` from a hardcoded `http://localhost:3000` to use an env variable with an empty-string fallback for same-origin setups.
+
+### 4. GitHub OAuth Redirect URI Mismatch
+
+**Problem:** GitHub showed "redirect_uri is not associated with this application." The `BETTER_AUTH_URL` in `.env` was `http://localhost:3000`, but on Vercel the app runs at `https://t3-chat-clone-five.vercel.app`. The redirect URI sent to GitHub didn't match what was registered.
+
+**Fix:** Set `BETTER_AUTH_URL` as a Vercel environment variable pointing to the production domain, and registered the full callback URL (`https://t3-chat-clone-five.vercel.app/api/auth/callback/github`) in GitHub OAuth app settings.
+
+### 5. Prisma 7 + pg Pool Adapter
+
+**Problem:** Prisma 7's driver adapter pattern (`@prisma/adapter-pg` + `pg.Pool`) is a newer approach that required wiring up the connection pool manually, creating the adapter, and passing it to `PrismaClient`. Not the typical `PrismaClient()` instantiation most tutorials show.
+
+**Fix:** Ok the above text is written by AI coz its kinda generic, but this issue boy-oh-boy, it was gut wrenching. So for some unknown reasons i decided why not just in the middle of my development cycle, upgrade prisma to newer prisma-8. WHICH IS SHIT, the docs suck, the AI in their page suck, the prisma-8 suck. Its so hard to workaround, they removed prisma studio or idk where it is, prisma migrate - No its a migration plan, now you gotta make a contract to database. It looked cool from outside, but when i wrote a line of schema with @updateAt, it went bonkers it never let me do so. For some reason they have removed it and the LSP hasnt caught up to update and everything is a mess. So finally I went back to prisma 7, man I gotta use drizzle more.
+
+## What I Learned
+
+- **Prisma's custom output paths require explicit `prisma generate` in CI/CD.** Don't assume the platform handles it.
+- **pnpm overrides are your friend for transitive dependency conflicts.** Especially when two packages in the same ecosystem pin different major versions.
+- **better-auth is opinionated about CORS.** If your client and server are on the same origin, don't set `baseURL` — let it use relative URLs.
+- **OAuth redirect URIs must match exactly.** Even a protocol mismatch (`http` vs `https`) breaks everything.
+- **Server components as auth guards work well** — no middleware needed for most apps. Layout-level `requireAuth()` catches everything.
+
+## The Result
+
+A fully functional multi-model AI chat application with GitHub/Google OAuth, persistent chat history, streaming responses, syntax highlighting, dark mode, and a resizable sidebar — deployed on Vercel with Docker support for self-hosting.

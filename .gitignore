@@ -42,5 +42,8 @@ next-env.d.ts
 
 # COZ VERCEL SUCK ASS
 pnpm-workspace.yaml
+/pnpm-workspace.yaml
+./pnpm-workspace.yaml
+
 # Contentlayer
 .contentlayer

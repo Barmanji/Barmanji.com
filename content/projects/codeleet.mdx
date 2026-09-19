@@ -1,0 +1,116 @@
+---
+title: CodeLeet
+description: What if Neetcode & Leetcode have a baby.
+repository: Barmanji/Leetcode-clone
+url: https://codeleet.barmanji.com
+date: "2026-07-29"
+published: true
+desktopSupported: true
+---
+
+# Storytime
+<img
+     src="https://i.postimg.cc/26TpC5bW/codeleet.png"
+     alt="Main Page"
+/>
+
+## Act I: The Architecture Episode
+
+**The plan:** A LeetCode clone. Next.js on the front. Judge0 for code execution. Postgres for remembering things. Clerk so strangers can't log in as me. Simple.
+
+**The budget math:** A shiny micro instance runs about $7.59/mo. A slightly shinier ARM one runs $6.13/mo. AWS gave me $140 of credits. That's 20 months of bliss, give or take a data transfer breach.
+
+**The first betrayal:** The ARM instance (`t4g`, the cheaper, shinier one) cannot run Judge0. Not "runs slowly." Cannot. Judge0 publishes its Docker image **amd64-only**, a 3.3 GB monolith that looks at your Graviton chip and whispers *"no."* So the greedy chip shopping spree died on the tarmac. Everyone I know running ARM Judge0 is running amd64 Judge0 and fibbing about it.
+This alone costed me about 2 dollar, litreally terminated the app 2 second after it spun.
+
+**Lesson learned:** Check the architecture before you check the price. Your savings account and your CPU are not the same thing.
+
+---
+
+## Act II: The Docker Files
+
+You pull three images. Postgres: ~152 MB. Redis: ~45 MB. Judge0: **3.3 GB, dressed as 3.3 GB.** Suddenly:
+
+```
+no space left on device
+```
+
+No sf, 8 GB default volume. Tried with 30 GB EBS. The wise heads suggested checking the size *first*.
+
+
+Then, finally: `curl localhost:2358/about` returns JSON. But the outside world? Nothing. *"Cant reach."* Because of course — the EC2 security group is a velvet rope list, and port 2358 wasn't on it. We opened port 80 like gentlemen, sealed 2358 like the crown jewels, and pointed nginx at it until `judge0.barmanji.com/about` returned `{"version":"1.13.1"}`. Auth on that endpoint? Later. Much later. There's a `TODO` somewhere with my name on it.
+
+---
+
+## Act III: What Does a 404 Even Cost?
+
+### The build that wasn't
+
+The app builds locally. The stars align. Then Vercel, with the confidence of a salesperson who has never used the product:
+
+```
+ENOENT .next/next-server.js.nft.json
+```
+
+A phantom `standalone` output setting collides with Next 16.3 on Vercel — so famous it has its own issue number (#96646). The fix was shameful in its simplicity:
+
+```ts
+...(process.env.VERCEL ? {} : { output: "standalone" })
+```
+
+One line. A `/ 0` in commit territory. It deploys.
+
+### Deep in the wilds of the Clerk
+
+The sign-in buttons did nothing. The console file a missing file. Specifically:
+
+```
+GET /__clerk/npm/@clerk/clerk-js@6/dist/clerk.browser.js 404
+```
+
+Clerk decides where to serve its JavaScript from at **build time** using your `*.vercel.app` URL (auto-proxy, they call it). Then it decides again, at **request time**, using your actual custom domain. When those two disagree — and they do, for custom domains, the way cats disagree with closed doors — every request falls through the middleware into Vercel's cold, static 404. The deployment was signed out, in good standing, and coming to nothing.
+
+We enabled `frontendApiProxy` in the middleware. Clerk will now proxy for you, it whispered. The `/__clerk/*` floodgates open, and in rushes...
+
+### The `host_invalid` incident
+
+```
+"We were unable to attribute this request to an instance running on Clerk.
+Make sure that your Clerk Publishable Key is correct."
+code: host_invalid
+```
+
+The proxy turns out to be a full-time job. It started tagging every request with its own `Clerk-Proxy-Url` header — including, it turns out, `http://localhost:3000/__clerk` on your own machine. Clerk's frontend API, very reasonably, went "who is localhost:3000?" and hung up. The same story, rebranded, plays out in production with your custom domain. One innocent refactor, and suddenly both your environments are having an identity crisis.
+
+**Post-mortem:** The telemetry toggle we suspected? Exonerated. "Keys are fine"? They were. The culprit was that one config line between `clerkMiddleware()` and `clerkMiddleware({ ... })` that we shipped in the name of progress. Lesson: **read the diff, not the blog.**
+
+---
+
+## Epilogue: Static, But Not Vercel
+
+And then, the final chapter — the one where Next.js, during the build, looks at pages that call `currentUser()` — which reads `headers()` — and says:
+
+```
+Route /profile couldn't be rendered statically because it used `headers`
+```
+
+Every page that reads the request is secretly dynamic, and Next wants them *labeled* dynamic. Add one line:
+
+```ts
+export const dynamic = 'force-dynamic';
+```
+
+...to the layouts and pages that breathe, and suddenly everyone's allowed to breathe at runtime again.
+
+---
+
+## What We Actually Learned
+
+1. **Check `arm64` before you commit to a chip.** No Judge0 for the Graviton crowd.
+2. **Docker is honest.** It tells you the disk is full, the password is missing, and the socket is off-limits. It saves you from yourself.
+3. **Clerk's auto-proxy and custom domains have a relationship status of "it's complicated."** If your JS 404s, look at who computed the URL, when, and using which host. The answers are rarely in the dashboard.
+4. **The fix that matters is frequently one line**, and the debugging that precedes it is frequently one weekend.
+5. **Ship smaller, blame softer, and always check the diff.**
+
+*Fin. (Or, as the deployment logs say: `Generating static pages using 1 worker...` forever.)*
+
