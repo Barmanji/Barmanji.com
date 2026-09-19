@@ -1,0 +1,7 @@
+allowBuilds:
+  contentlayer: true
+  esbuild: true
+  protobufjs: true
+  unrs-resolver: true
+patchedDependencies:
+  '@contentlayer/cli': patches/@contentlayer__cli.patch
