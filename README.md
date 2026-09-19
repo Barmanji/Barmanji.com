@@ -1,3 +1,3 @@
-# My Portfolio!
+# [My Portfolio!](barmanji.com)
 
-#### Based on [chronmark's website](https://chronark.com)
+Cmo'n don't waste time reading this, click on the website.
