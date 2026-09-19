@@ -68,18 +68,35 @@ export default function Hero() {
           . Currently dating{" "}
           <Link
             target="_blank"
-            href="https://nextjs.org/"
+            href="https://tanstack.com/query/latest"
             className="underline duration-500 hover:text-zinc-300"
           >
-            TanstackQuery and Inngest{" "}
+            TanstackQuery
+          </Link>{" "}
+          and{" "}
+          <Link
+            target="_blank"
+            href="https://doc.rust-lang.org/book/"
+            className="underline duration-500 hover:text-zinc-300"
+          >
+            Rust.
           </Link>
           <br />
-          Not just a{" "}
+          If you like my{" "}
           <span className="relative group text-yellow-500 transition duration-500 hover:text-yellow-300">
-            FullStack Developer
+            <Link target="_blank" href="/projects">
+              Work.{" "}
+            </Link>
           </span>
-          , but your partner in creativity! Got an idea? Let&apos;s make it real.
-          Your vision, my code –{" "}
+          Then{" "}
+          <Link
+            target="_blank"
+            href="/contact"
+className="relative text-zinc-300 duration-500 hover:text-zinc-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-current after:transition-transform after:duration-200 hover:after:origin-bottom-left hover:after:scale-x-100"
+          >
+            hook
+          </Link>{" "}
+          me up{" "}
           <span className="group relative text-pink-600 transition duration-500 hover:brightness-125">
             let&apos;s cook up something amazing!
           </span>
