@@ -4,10 +4,16 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@contentlayer/cli': a622cb0aea8d9b1cac60de823c4ea2dc644e16ce9040bd5aa98e2ef30b2c3103
+
 importers:
 
   .:
     dependencies:
+      '@contentlayer/cli':
+        specifier: ^0.3.4
+        version: 0.3.4(patch_hash=a622cb0aea8d9b1cac60de823c4ea2dc644e16ce9040bd5aa98e2ef30b2c3103)(esbuild@0.18.20)(supports-color@7.2.0)
       '@dimforge/rapier3d-compat':
         specifier: ^0.19.2
         version: 0.19.2
@@ -4036,7 +4042,7 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
-  '@contentlayer/cli@0.3.4(esbuild@0.18.20)(supports-color@7.2.0)':
+  '@contentlayer/cli@0.3.4(patch_hash=a622cb0aea8d9b1cac60de823c4ea2dc644e16ce9040bd5aa98e2ef30b2c3103)(esbuild@0.18.20)(supports-color@7.2.0)':
     dependencies:
       '@contentlayer/core': 0.3.4(esbuild@0.18.20)(supports-color@7.2.0)
       '@contentlayer/utils': 0.3.4
@@ -5600,7 +5606,7 @@ snapshots:
 
   contentlayer@0.3.4(esbuild@0.18.20)(supports-color@7.2.0):
     dependencies:
-      '@contentlayer/cli': 0.3.4(esbuild@0.18.20)(supports-color@7.2.0)
+      '@contentlayer/cli': 0.3.4(patch_hash=a622cb0aea8d9b1cac60de823c4ea2dc644e16ce9040bd5aa98e2ef30b2c3103)(esbuild@0.18.20)(supports-color@7.2.0)
       '@contentlayer/client': 0.3.4(esbuild@0.18.20)(supports-color@7.2.0)
       '@contentlayer/core': 0.3.4(esbuild@0.18.20)(supports-color@7.2.0)
       '@contentlayer/source-files': 0.3.4(esbuild@0.18.20)(supports-color@7.2.0)

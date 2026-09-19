@@ -189,7 +189,7 @@ const components = {
 				<pre
 					ref={preRef}
 					className={clsx(
-						"mt-6 mb-4 overflow-x-auto rounded-lg border bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-800 p-4 pr-20 font-mono text-sm text-zinc-800 dark:text-zinc-300",
+						"mt-6 mb-4 overflow-x-auto rounded-lg border bg-zinc-800 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-800 p-4 pr-20 font-mono text-sm text-zinc-800 dark:text-zinc-300",
 						className,
 					)}
 					{...props}
@@ -201,9 +201,9 @@ const components = {
 		return (
 			<code
 				className={clsx(
-					"font-mono text-sm text-zinc-800 dark:text-zinc-300",
+					"font-mono text-sm text-zinc-100 dark:text-zinc-300",
 					"[pre_&]:bg-transparent [pre_&]:p-0 [pre_&]:border-none",
-					"bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/50 rounded py-[0.2rem] px-[0.3rem]",
+					"bg-zinc-700 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/50 rounded py-[0.2rem] px-[0.3rem]",
 					className,
 				)}
 				{...props}

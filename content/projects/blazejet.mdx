@@ -1,6 +1,6 @@
 ---
 title: Blaze Jet
-description: WIP
+description: Vercel Clone
 repository: Barmanji/BlazeJet/
 url: https://github.com/Barmanji/BlazeJet/
 date: "2026-02-15"
@@ -8,6 +8,135 @@ published: true
 desktopSupported: true
 ---
 
-### Overview
-**BlazeJet** Host Blazzingly Fast
+# VercelClone Project Documentation
 
+This document provides a comprehensive overview of the VercelClone project, detailing its architecture, the technologies employed across its services, and the exposed API endpoints. Made with the help of [Piyush Garg](https://github.com/piyushgarg-dev) - But could never run it (It runs manually, build the docker images to ECS in AWS, I could never figure out how to do that programmatically)
+
+---
+
+## 1. Project Overview
+
+VercelClone is a monorepo project designed to emulate the functionalities of platforms like Vercel. Its primary goal is to facilitate the building and deployment of web applications through an integrated process that includes Git repository linking, automated build pipelines, and efficient static asset hosting.
+
+The project is structured into four distinct, interconnected services, each playing a crucial role in the deployment lifecycle:
+
+*   **Frontend**: The user-facing application for interaction.
+*   **API Server**: The central backend for managing project data and orchestrating operations.
+*   **Build Server**: Responsible for the build process of user projects.
+*   **S3 Reverse Proxy**: Handles serving deployed applications.
+
+---
+
+## 2. Architecture Overview
+
+The VercelClone platform is designed with a microservices architecture, where each service is specialized for a particular set of tasks.
+
+### 2.1. Component Breakdown
+
+*   **Frontend**:
+    The main user interface built with Next.js and React. It enables users to create and manage projects, link Git repositories, initiate deployments, and monitor the status of their builds and deployments. It communicates with the API Server for administrative tasks and utilizes Socket.IO for real-time updates, such as streaming build logs.
+
+*   **API Server**:
+    This service acts as the central nervous system of the backend. Developed with Express.js, it exposes a suite of REST APIs for core functionalities including project creation, deployment initiation, and retrieval of deployment logs. It integrates with:
+    *   **Prisma**: For persistent data storage and management in a PostgreSQL database.
+    *   **Kafka**: For asynchronous communication, such as dispatching build requests to the Build Server.
+    *   **AWS SDK for ECS**: To programmatically manage and launch containerized build environments.
+    *   **ClickHouse**: For efficient storage and querying of analytical data, particularly deployment logs.
+    *   **Socket.IO**: To push real-time updates and logs to connected Frontend clients.
+
+*   **Build Server**:
+    A dedicated worker service that operates in response to build requests. It consumes messages from a Kafka queue, clones the specified Git repository, executes the project's build commands (e.g., `npm install`, `next build`), and subsequently uploads the generated static assets or other build artifacts to an AWS S3 bucket.
+
+*   **S3 Reverse Proxy**:
+    This service functions as a gateway for serving the deployed applications. Built with Express.js and leveraging `http-proxy`, it intercepts incoming HTTP requests. Based on domain or subdomain routing logic, it proxies these requests to the corresponding AWS S3 bucket where the static build artifacts are stored. This setup allows for custom domain mapping and potentially provides additional features like SSL termination.
+
+### 2.2. Data Flow Example: Project Deployment
+
+This sequence illustrates a typical project deployment workflow:
+
+1.  **User Initiates Project Creation**: A user interacts with the **Frontend** to create a new project.
+2.  **API Call for Project Creation**: The **Frontend** sends a `POST /project` request to the **API Server**.
+3.  **Database Persistence**: The **API Server** stores the new project's details in the PostgreSQL database via Prisma and returns project information to the Frontend.
+4.  **Deployment Request**: The user then initiates a deployment from the **Frontend**, which sends a `POST /deploy` request to the **API Server**.
+5.  **Build Environment Orchestration**: The **API Server** records the deployment in PostgreSQL and uses the AWS ECS SDK to launch a new task (running the **Build Server** container). It passes critical environment variables like `GIT_REPOSITORY_URL`, `PROJECT_ID`, and `DEPLOYMENT_ID` to this ECS task.
+6.  **Project Build and Artifact Upload**: The launched **Build Server** task clones the specified Git repository, executes the build process, and uploads the resulting output to an S3 bucket. During this process, build logs are continuously pushed to a Kafka topic.
+7.  **Real-time Log Streaming and Storage**: The **API Server** consumes these logs from the Kafka topic, stores them in ClickHouse for historical analysis, and simultaneously streams them in real-time to the connected **Frontend** clients via Socket.IO.
+8.  **Application Serving**: When an end-user accesses the deployed application (e.g., via a unique URL or custom domain), their request is routed through the **S3 Reverse Proxy**. This proxy retrieves and serves the static assets from the designated S3 bucket to the user.
+
+---
+
+## 3. Technologies Used
+
+This section details the primary technologies utilized across each service within the VercelClone monorepo, extracted from their respective `package.json` files.
+
+### 3.1. Frontend (`frontend/`)
+
+**Description**: The client-side application for user interaction and project management.
+
+| Technology                     | Version   | Purpose                                                                                   | Architecture/Role                                                                                                   |
+| :----------------------------- | :-------- | :---------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
+| **Next.js**                    | `16.1.1`  | React framework for building server-side rendered and static web applications.            | Provides routing, API routes, and optimized rendering capabilities.                                                 |
+| **React**                      | `19.2.3`  | JavaScript library for building user interfaces.                                          | Fundamental for declarative UI component development.                                                               |
+| **React-DOM**                  | `19.2.3`  | Entry point for React to the DOM.                                                         | Renders and manages React components within the web browser's Document Object Model.                                |
+| **Tailwind CSS**, **PostCSS**, **Autoprefixer** | `4`, `4`, `10.4.23` | Utility-first CSS framework and associated tools for rapid and consistent UI styling.       | Compiles and optimizes CSS stylesheets based on utility classes defined in components.                               |
+| **@radix-ui/react-slot**       | `1.2.4`   | UI library providing unstyled, accessible component primitives.                           | Offers headless UI components that handle accessibility and interaction logic, deferring styling to the developer.   |
+| **Clsx**                       | `2.1.1`   | Utility for conditionally composing `className` strings.                                  | Simplifies the dynamic application of CSS classes in React components based on logic.                               |
+| **Lucide-react**               | `0.562.0` | Collection of customizable open-source vector icons.                                      | Provides easy-to-use icon components for enhancing the visual design of the UI.                                     |
+| **Axios**                      | `1.13.2`  | Promise-based HTTP client for the browser and Node.js.                                    | Facilitates making HTTP requests from the frontend to various backend API endpoints.                                |
+| **Socket.IO Client**           | `4.8.3`   | Real-time, bidirectional, event-based communication library.                              | Establishes and manages WebSocket connections for real-time data exchange with the Socket.IO server.              |
+| **TypeScript**                 | `5`       | Typed superset of JavaScript.                                                             | Enhances code quality, maintainability, and developer experience through static type checking.                      |
+| **ESLint**, **Eslint-config-next** | `9`, `16.1.1` | Linter for identifying and reporting on problematic patterns in JavaScript/TypeScript code. | Enforces coding standards, ensures consistency, and helps prevent common errors during development.                 |
+
+### 3.2. API Server (`api-server/`)
+
+**Description**: The central backend server for project, deployment, and data management.
+
+| Technology               | Version    | Purpose                                                                                   | Architecture/Role                                                                                                   |
+| :----------------------- | :--------- | :---------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
+| **Express**              | `5.2.1`    | Fast, unopinionated web framework for Node.js.                                            | Forms the foundation for building RESTful APIs, managing HTTP requests, and routing.                                |
+| **Socket.IO**            | `4.8.3`    | Real-time, bidirectional, event-based communication library.                              | Manages WebSocket connections and facilitates real-time data pushing (e.g., logs) to connected clients.             |
+| **Prisma**, **@prisma/client**, **@prisma/adapter-pg** | `7.2.0`    | Next-generation ORM for Node.js and TypeScript, specifically with a PostgreSQL adapter. | Provides an abstraction layer for database interactions, enabling type-safe queries and schema migrations for PostgreSQL. |
+| **KafkaJS**              | `2.2.4`    | Modern Apache Kafka client for Node.js.                                                   | Enables robust asynchronous communication, used for queuing and processing events between microservices.            |
+| **@aws-sdk/client-ecs**  | `3.958.0`  | AWS SDK client for Elastic Container Service.                                             | Used to programmatically interact with AWS ECS, primarily for orchestrating and managing containerized build tasks. |
+| **@clickhouse/client**   | `1.15.0`   | Client library for ClickHouse, a column-oriented database management system.              | Facilitates high-performance storage and analytical querying of large datasets, such as deployment logs.             |
+| **CORS**                 | `2.8.5`    | Node.js middleware for enabling Cross-Origin Resource Sharing.                            | Configures appropriate headers to allow web applications from different origins to make requests to the API.        |
+| **Dotenv**               | `17.2.3`   | Module to load environment variables from a `.env` file.                                  | Manages application configuration and sensitive data by externalizing it from the codebase.                         |
+| **Random-Word-Slugs**    | `0.1.7`    | Generates random URL-friendly slugs.                                                      | Used for creating unique and readable subdomains for newly created projects.                                        |
+| **UUID**                 | `13.0.0`   | Library for the creation of RFC-compliant UUIDs (Universally Unique Identifiers).         | Generates unique identifiers for various entities and operations within the system.                                 |
+| **Zod**                  | `4.2.1`    | TypeScript-first schema declaration and validation library.                               | Ensures data integrity and consistency by validating incoming request bodies and other data structures.             |
+| **TypeScript**, **TSX**  | `5.9.3`, `4.21.0` | Typed superset of JavaScript and a TypeScript execution environment.                      | Provides type safety, improves code maintainability, and enables direct execution of TypeScript files during development. |
+
+### 3.3. Build Server (`build-server/`)
+
+**Description**: A service focused on building projects and managing their artifacts.
+
+| Technology               | Version   | Purpose                                                                                   | Architecture/Role                                                          |
+| :----------------------- | :-------- | :---------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| **KafkaJS**              | `2.2.4`   | Modern Apache Kafka client for Node.js.                                                   | Consumes build-request messages from Kafka topics, enabling asynchronous and scalable build processing. |
+| **@aws-sdk/client-s3**  | `3.958.0` | AWS SDK client for S3.                                                                    | Provides programmatic access to AWS S3, used for uploading and managing build artifacts. |
+| **Mime-Types**           | `3.0.2`   | Comprehensive MIME type mapping utility.                                                  | Determines the correct MIME type for files before they are uploaded to S3, ensuring proper serving by browsers. |
+| **TypeScript**           | `5.9.3`   | Typed superset of JavaScript.                                                             | Enhances code quality and maintainability through static type checking for the build logic. |
+
+### 3.4. S3 Reverse Proxy (`s3-rev-proxy/`)
+
+**Description**: A reverse proxy service for serving deployed applications from S3.
+
+| Technology               | Version    | Purpose                                                                                   | Architecture/Role                                                               |
+| :----------------------- | :--------- | :---------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **Express**              | `5.2.1`    | Fast, unopinionated web framework for Node.js.                                            | Provides the web server infrastructure for intercepting and handling incoming HTTP requests. |
+| **HTTP-Proxy**           | `1.18.1`   | HTTP/HTTPS proxying library.                                                              | Enables dynamic forwarding of incoming requests to the appropriate target, in this case, AWS S3 buckets. |
+| **TypeScript**, **TSX**  | `5.9.3`, `4.21.0` | Typed superset of JavaScript and a TypeScript execution environment.                      | Improves code quality and developer experience through static type checking and direct TypeScript execution during development. |
+
+---
+
+## 4. REST API Endpoints
+
+The `api-server` component exposes the following RESTful API endpoints for managing projects and deployments:
+
+| Method | Endpoint          | Description                                                    | Request Body (`application/json`)                  | Successful Response (`application/json`)                                                                        |
+| :----- | :---------------- | :------------------------------------------------------------- | :------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- |
+| `POST` | `/project`        | Creates a new project and assigns a unique subdomain.          | `{ "name": "project-name", "gitURL": "https://github.com/user/repo" }` | `{ "status": "success", "data": { "project": { "id": "uuid", "name": "project-name", "gitURL": "https://github.com/user/repo", "subDomain": "random-slug", "createdAt": "ISOString" } } }` |
+| `POST` | `/deploy`         | Initiates a new deployment for a given project.                | `{ "projectId": "uuid" }`                          | `{ "status": "queued", "data": { "deploymentId": "uuid" } }`                                                          |
+| `GET`  | `/logs/:id`       | Retrieves real-time or historical deployment logs for a specific deployment ID.        | (None)                                             | `{ "logs": [ { "event_id": "uuid", "deployment_id": "uuid", "log": "Log message...", "timestamp": "ISOString" } ] }` |
+
+---

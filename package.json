@@ -10,6 +10,7 @@
     "cl": "pnpm exec contentlayer build"
   },
   "dependencies": {
+    "@contentlayer/cli": "^0.3.4",
     "@dimforge/rapier3d-compat": "^0.19.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",

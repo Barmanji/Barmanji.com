@@ -1,5 +1,14 @@
 @reference "../../../globals.css";
 
+.prose iframe {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.5rem;
+}
 [data-rehype-pretty-code-fragment] code {
     @apply grid min-w-full break-words rounded-none border-0 p-0 text-sm;
     counter-reset: line;
@@ -48,8 +57,9 @@
     color: var(--shiki-light);
     background-color: var(--shiki-light-bg);
   }
-:where(.dark code[data-theme*=" "] span),
-:where(.dark code[data-theme*=" "] .line) {
-    color: var(--shiki-dark);
-    background-color: var(--shiki-dark-bg);
-  }
+:where(.dark) code[data-theme*=" "] span,
+:where(.dark) code[data-theme*=" "] .line {
+         color: var(--shiki-dark);
+         background-color: var(--shiki-dark-bg);
+     }
+
