@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     siteName: "barmanji.com",
     images: [
       {
-        url: "https://barmanji.vercel.app/og.png",
+        url: "https://www.barmanji.com/og.png",
         width: 1920,
         height: 1080,
       },

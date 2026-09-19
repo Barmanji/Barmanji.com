@@ -40,7 +40,7 @@ export default function ResumeViewer() {
             onLoad={() => setResumeLoading(false)}
             layout="responsive"
           />
-          <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center group-hover:bg-opacity-70">
+<div className="absolute inset-0 bg-black/50 flex items-center justify-center group-hover:bg-black/30">
             <View className="text-white opacity-0 group-hover:opacity-100" />
           </div>
         </div>
@@ -64,7 +64,7 @@ export default function ResumeViewer() {
                 setTimeout(() => setDownloadTimeout(false), 3000);
                 const link = document.createElement('a');
                 link.href = '/resume.pdf';
-                link.download = 'SatwikBhasin-Resume.pdf';
+                link.download = 'AjayBarman-Resume.pdf';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
