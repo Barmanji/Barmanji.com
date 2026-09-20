@@ -38,7 +38,7 @@ export const Navigation: React.FC = () => {
             </Link>
             <Link
               href="/skills"
-              className={`duration-200 ${pathName === "/skills" ? "text-white" : "text-zinc-400 hover:text-zinc-100"} font-kode-mono`}
+              className={`hidden md:block duration-200 ${pathName === "/skills" ? "text-white" : "text-zinc-400 hover:text-zinc-100"} font-kode-mono`}
             >
               Competencies
             </Link>

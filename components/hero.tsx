@@ -18,7 +18,7 @@ export default function Hero() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-1xl duration-500 text-zinc-500 hover:text-zinc-300"
+              className={`${item.href === "/skills" ? "hidden md:block" : ""} text-1xl duration-500 text-zinc-500 hover:text-zinc-300`}
             >
               {item.name}
             </Link>
