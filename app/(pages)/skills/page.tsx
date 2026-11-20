@@ -1,115 +1,58 @@
-"use client";
-
-import React from "react";
+import type { Metadata } from "next";
 import { Navigation } from "../../../components/nav";
-import { StaggeredGrid, BentoItem } from "@/components/ui/staggered-grid";
-import {
-  SiDocker,
-  SiNeovim,
-  SiTanstack,
-  SiRust,
-  SiClaude,
-  SiAnthropic,
-} from "react-icons/si";
+import { EcosystemGrid } from "@/components/ecosystems/ecosystem-grid";
+import { ecosystems } from "@/lib/ecosystems";
 
-const skillImages = [
-  "https://skillicons.dev/icons?i=ts",
-  "https://skillicons.dev/icons?i=js",
-  "https://skillicons.dev/icons?i=react",
-  "https://skillicons.dev/icons?i=nextjs",
-  "https://skillicons.dev/icons?i=nodejs",
-  "https://skillicons.dev/icons?i=express",
-  "https://skillicons.dev/icons?i=tailwind",
-  "https://skillicons.dev/icons?i=postgresql",
-  "https://skillicons.dev/icons?i=mongodb",
-  "https://skillicons.dev/icons?i=redis",
-  "https://skillicons.dev/icons?i=kafka",
-  "https://skillicons.dev/icons?i=bun",
-  "https://skillicons.dev/icons?i=docker",
-  "https://skill-icons-v2.vercel.app/api/icons?i=trpc",
-  "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/openai/default.svg",
-  "https://skillicons.dev/icons?i=aws",
-  "https://skillicons.dev/icons?i=graphql",
-  "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/drizzle-orm/default.svg",
-  "https://skillicons.dev/icons?i=html",
-  "https://skillicons.dev/icons?i=supabase",
-  "https://skillicons.dev/icons?i=git",
-  "https://skillicons.dev/icons?i=jest",
-  "https://skillicons.dev/icons?i=cypress",
-  "https://skillicons.dev/icons?i=prisma",
-  "https://skillicons.dev/icons?i=socketio",
-  "https://skillicons.dev/icons?i=firebase",
-];
+export const metadata: Metadata = {
+	title: "Skills",
+	description:
+		"Languages, runtimes, and tools behind the projects: Rust, Go, Python, Next.js, databases, AI agents, infrastructure, and Neovim.",
+};
 
-const bentoItems: BentoItem[] = [
-  {
-    id: 1,
-    title: "Rust",
-    subtitle: "Systems",
-    description: "Systems language",
-    icon: <SiRust size={24} />,
-    gradientFrom: "#dea584",
-    gradientTo: "#78350f",
-  },
-  {
-    id: 2,
-    title: "TanStack",
-    expandedTitle: "TanStack Query",
-    subtitle: "Data Fetching",
-    description: "Server state management",
-    icon: <SiTanstack size={24} />,
-    gradientFrom: "#ef4444",
-    gradientTo: "#991b1b",
-  },
-  {
-    id: 3,
-    title: "Neovim",
-    subtitle: "Editor",
-    description: "Terminal editor",
-    icon: <SiNeovim size={24} />,
-    gradientFrom: "#57a143",
-    gradientTo: "#14532d",
-  },
-  {
-    id: 4,
-    title: "Claude",
-    subtitle: "AI",
-    description: "AI assistant",
-    icon: <SiClaude size={24} />,
-    gradientFrom: "#d97757",
-    gradientTo: "#78350f",
-  },
-  {
-    id: 5,
-    title: "Agent Kit",
-    subtitle: "AI Agents",
-    description: "Agent framework",
-    icon: <SiAnthropic size={24} />,
-    gradientFrom: "#8b5cf6",
-    gradientTo: "#4c1d95",
-  },
-  {
-    id: 6,
-    title: "Docker",
-    subtitle: "DevOps",
-    description: "Containers",
-    icon: <SiDocker size={24} />,
-    gradientFrom: "#2496ED",
-    gradientTo: "#0c4a6e",
-  },
+const stats = [
+	{ label: "Languages", value: "4+" },
+	{ label: "Projects", value: "27" },
+	{ label: "Ecosystems", value: String(ecosystems.length) },
+	{ label: "Editor", value: "Neovim" },
 ];
 
 export default function SkillsPage() {
-  return (
-    <div className="bg-gradient-to-tl from-zinc-900/0 via-zinc-900 to-zinc-900/0 min-h-screen flex flex-col">
-      <Navigation />
-      <div className="flex-grow w-screen pt-20">
-        <StaggeredGrid
-          images={skillImages}
-          bentoItems={bentoItems}
-          centerText={["Experienced", "in"]}
-        />
-      </div>
-    </div>
-  );
+	return (
+		<div className="min-h-screen pb-24 bg-gradient-to-tl from-zinc-900/0 via-zinc-900 to-zinc-900/0">
+			<Navigation />
+			<div className="px-5 pt-24 mx-auto max-w-7xl sm:px-6 sm:pt-28 lg:px-8">
+				<div className="max-w-2xl">
+					<p className="font-kode-mono text-[10px] uppercase tracking-[0.3em] text-zinc-500">
+						<span className="text-[#ff174f]">{"//"}</span> Core Engineering
+						Skills
+					</p>
+					<h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl">
+						The skills behind the work
+					</h1>
+					<p className="mt-4 text-zinc-400">
+						Languages, runtimes, and tools I actually build with. Tap any card
+						for the longer version.
+					</p>
+				</div>
+
+				<div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+					{stats.map((stat) => (
+						<div
+							key={stat.label}
+							className="rounded-lg border border-zinc-800 bg-zinc-950/60 px-4 py-3"
+						>
+							<p className="font-kode-mono text-[10px] uppercase tracking-[0.18em] text-zinc-600">
+								{stat.label}
+							</p>
+							<p className="mt-1 text-lg text-zinc-100">{stat.value}</p>
+						</div>
+					))}
+				</div>
+
+				<div className="mt-10">
+					<EcosystemGrid items={ecosystems} />
+				</div>
+			</div>
+		</div>
+	);
 }
