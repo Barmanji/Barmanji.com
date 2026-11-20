@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import LocalFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
+import { NumberShortcuts } from "@/components/number-shortcuts";
 import "./globals.css";
 
 const inter = Inter({
@@ -80,6 +81,7 @@ export default function RootLayout({
         className={`min-h-full flex flex-col bg-black ${process.env.NODE_ENV === "development" ? "debug-screens" : ""}`}
       >
         {children}
+        <NumberShortcuts />
         <Analytics />
       </body>
     </html>

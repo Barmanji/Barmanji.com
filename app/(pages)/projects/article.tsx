@@ -1,10 +1,10 @@
-import type { Project } from "@/.contentlayer/generated";
 import Link from "next/link";
 import { Eye, Smartphone, Monitor } from "lucide-react";
 import { TechStack } from "@/components/tech-stack";
+import type { ProjectCardData } from "@/lib/project-types";
 
 type Props = {
-	project: Project;
+	project: ProjectCardData;
 	views: number;
 };
 

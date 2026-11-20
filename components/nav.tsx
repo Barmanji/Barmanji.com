@@ -3,6 +3,8 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { Kbd } from "@/components/ui/kbd";
+import { navItems } from "@/lib/navigation";
 
 export const Navigation: React.FC = () => {
   const pathName = usePathname();
@@ -29,31 +31,23 @@ export const Navigation: React.FC = () => {
         }`}
       >
         <div className="container flex flex-row-reverse items-center justify-between p-6 mx-auto">
-          <div className="flex justify-between gap-6 overflow-x-auto whitespace-nowrap">
-            <Link
-              href="/projects"
-              className={`duration-200 ${pathName === "/projects" ? "text-white" : "text-zinc-400 hover:text-zinc-100"} font-kode-mono`}
-            >
-              Projects
-            </Link>
-            <Link
-              href="/skills"
-              className={`hidden md:block duration-200 ${pathName === "/skills" ? "text-white" : "text-zinc-400 hover:text-zinc-100"} font-kode-mono`}
-            >
-              Competencies
-            </Link>
-            <Link
-              href="/contact"
-              className={`duration-200 ${pathName === "/contact" ? "text-white" : "text-zinc-400 hover:text-zinc-100"} font-kode-mono`}
-            >
-              Contact
-            </Link>
-            <Link
-              href="/resume"
-              className={`duration-200 ${pathName === "/resume" ? "text-white" : "text-zinc-400 hover:text-zinc-100"} font-kode-mono`}
-            >
-              Resume
-            </Link>
+          <div className="flex justify-between gap-4 overflow-x-auto whitespace-nowrap md:gap-6">
+            {navItems.map((item) => {
+              const active = pathName === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-keyshortcuts={item.key}
+                  className={`${item.mobileHidden ? "hidden md:flex" : "flex"} flex-col items-center gap-1 duration-200 ${active ? "text-white" : "text-zinc-400 hover:text-zinc-100"} font-kode-mono`}
+                >
+                  <span>{item.name}</span>
+                  <Kbd className={`hidden md:inline-flex ${active ? "border-zinc-500 text-zinc-300" : ""}`}>
+                    [{item.key}]
+                  </Kbd>
+                </Link>
+              );
+            })}
           </div>
 
           <Link
