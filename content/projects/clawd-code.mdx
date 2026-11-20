@@ -1,0 +1,60 @@
+---
+title: Clawd Code
+description: A small terminal coding agent in Go that gives an OpenAI-compatible model file, shell, skill, and LSP tools.
+repository: Barmanji/ClaudeCode
+url: https://github.com/Barmanji/ClaudeCode
+date: "2026-10-08"
+published: true
+desktopSupported: true
+techStack:
+  - Go
+  - OpenAI API
+  - Charmbracelet Huh
+  - LSP
+---
+
+# Clawd Code
+
+A small coding agent for the terminal, written in Go. It sends your prompt to an
+OpenAI-compatible chat API and lets the model read files, write files, and run shell
+commands until the task is done. It is a single binary: one prompt per invocation, no
+daemon, no session server.
+
+```sh
+clawd "find the failing test in internal/config and fix it"
+```
+
+## Setup and providers
+
+`clawd setup` is an interactive wizard: pick a provider, paste a key (validated against the
+provider before saving), then choose a model from the live `/models` catalogue. The result
+goes to `clawd-code/config.json` in the OS config directory with `0600` permissions.
+Already-exported keys are detected on first run, and `setup --no-input` covers CI.
+
+Supported providers include OpenRouter, OpenAI, Groq, DeepSeek, Mistral, xAI, Together,
+Ollama, and any custom OpenAI-compatible base URL. Flags override `CLAWD_*` variables,
+which override provider key variables, which override the config file.
+
+## How it works
+
+`cmd/clawd` resolves configuration and hands one prompt to `internal/agent`, which runs a
+plain chat-completions loop and appends tool results until the model stops calling tools.
+Tools are Read, Write, Bash, Skill, Task, and an optional LSP bridge. Guard rails cap tool
+rounds at 64, subagents at depth 2, and truncate tool output before it reaches the model.
+API errors are translated into actionable messages — a `401` tells you to run setup.
+
+Any `.claude/skills/<name>/SKILL.md` in the working directory or user config is exposed as a
+`Skill` tool. Slash commands like `/review src/main.go` expand the skill and substitute
+`$ARGUMENTS` and `$0`, `$1`, … before the prompt is sent.
+
+## Install and limitations
+
+The same binary is published as `@barmanji/clawd-code` on npm, through a checksum-verified
+install script, and via `go install github.com/Barmanji/ClaudeCode/cmd/clawd@latest`.
+
+There is no persistent session or streaming output. `Task` and `Skill` subagents share the
+parent model and cannot spawn their own. The LSP tool only appears when a CodeCrafters LSP
+bridge is available. `Bash` uses `bash -c` (or `cmd /C` on Windows), overridable with
+`CLAWD_SHELL`.
+
+Source: [Barmanji/ClaudeCode](https://github.com/Barmanji/ClaudeCode).

@@ -1,0 +1,53 @@
+---
+title: Django Chickbum
+description: A short-form posting app built on Django — sign in, post text with an optional photo, then edit or delete your own posts.
+repository: Barmanji/django_unchained
+url: https://github.com/Barmanji/django_unchained
+date: "2026-11-19"
+published: true
+desktopSupported: true
+techStack:
+  - Python
+  - Django
+  - SQLite
+  - Bootstrap
+---
+
+# Django Chickbum
+
+A small short-form posting app built on Django. Register, sign in, publish a text post with
+an optional photo, then edit or delete only your own posts. Authentication and admin are
+stock Django; the custom work lives in the `tweet` app.
+
+## Features
+
+- A chronological feed at `/tweet/` with edit and delete buttons only on your own posts.
+- Login-required post creation; the author is taken from `request.user` rather than the form.
+- Owner-scoped editing and deletion — someone else's post returns `404`, not `403`.
+- Registration with a custom `UserCreationForm` that logs the new user in immediately.
+- A `/health` endpoint returning `{"status": "ok"}` for uptime probes.
+- Django admin with the `Tweet` model registered.
+
+Uploaded photos are nullable and rendered only when present. Every page extends a shared
+layout holding the Bootstrap navbar, Login/Register buttons, and a POST-based logout form
+(modern Django logs out on POST only).
+
+## Stack and layout
+
+Python 3.12+, Django 6.1, Pillow for image fields, and SQLite for local storage. The
+project splits into the settings package, a `templates/` directory, and the `tweet/`
+app with its models, forms, views, URLconf, and templates.
+
+## Run it locally
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cd djangoChickbum
+python manage.py migrate
+python manage.py runserver
+```
+
+Open [http://127.0.0.1:8000/tweet/](http://127.0.0.1:8000/tweet/). There is no route at `/` by design.
+
+Source: [Barmanji/django_unchained](https://github.com/Barmanji/django_unchained).

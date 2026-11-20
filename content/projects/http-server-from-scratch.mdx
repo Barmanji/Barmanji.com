@@ -1,0 +1,58 @@
+---
+title: HTTP Server from Scratch
+description: A threaded HTTP/1.1 server in Rust, built stage by stage against CodeCrafters' open-source tester on local hardware.
+repository: Barmanji/http-server-from-scratch-with-codecrafter
+url: https://github.com/Barmanji/http-server-from-scratch-with-codecrafter
+date: "2026-10-08"
+published: true
+desktopSupported: true
+techStack:
+  - Rust
+  - flate2
+  - CodeCrafters
+---
+
+# HTTP Server from Scratch
+
+A small HTTP/1.1 server in Rust, written by working through CodeCrafters' "Build your own
+HTTP server" stages. It was checked against CodeCrafters' open-source tester running on my
+own machine, so none of this needed a membership.
+
+## Routes
+
+| Request | Response |
+| --- | --- |
+| `GET /` | `200`, empty body |
+| `GET /echo/{str}` | `200`, the string as `text/plain`, gzip when requested |
+| `GET /user-agent` | `200`, the request's `User-Agent` |
+| `GET /files/{name}` | raw bytes, or `404` |
+| `POST /files/{name}` | writes the body to the served directory, replies `201` |
+| anything else | `404` |
+
+Connections stay open between requests until `Connection: close` or a disconnect. Each
+connection gets its own thread.
+
+## Implementation notes
+
+Everything lives in `src/main.rs`. A single `BufReader` per connection is created outside
+the request loop so bytes already pulled off the socket are not lost between requests, and
+headers are read with `read_line` so the reader sits exactly at the first body byte — which
+lets `POST` use `read_exact(content_length)` on the same reader. Request-local header state
+lives inside the loop so request two cannot inherit request one's headers.
+
+Responses are built as `Vec<u8>` because file contents and gzip output are binary. Gzip
+uses `flate2`; `encoder.finish()` is required to write the trailer, and `Content-Length`
+must be the compressed size. `safe_path` rejects `..` and `/` in file names so a request
+cannot escape the served directory.
+
+All 14 CodeCrafters stages pass locally, including concurrent persistent connections and
+connection closure.
+
+## Known limits
+
+One thread per connection with no cap or idle timeout; `Connection: close` is spliced into
+the response bytes rather than added by a header builder; compression uses `unwrap()`;
+and request parsing is lenient — no version check, no header-size limit, and unparseable
+`Content-Length` is treated as `0`.
+
+Source: [Barmanji/http-server-from-scratch-with-codecrafter](https://github.com/Barmanji/http-server-from-scratch-with-codecrafter).

@@ -1,12 +1,70 @@
 ---
 title: Health Bridge
-description: WIP
+description: An Indian-language-first telehealth app with consent-based AI intake, verified doctors, and careful appointment booking.
 repository: Barmanji/healthBridge
 url: https://github.com/Barmanji/healthBridge
 date: "2026-03-02"
 published: true
 desktopSupported: true
+techStack:
+  - Next.js
+  - TypeScript
+  - Tailwind CSS
+  - PostgreSQL
+  - Drizzle ORM
+  - OpenAI API
+  - FastAPI
 ---
 
-### Overview
-**Health Bridge** WIP
+# Health Bridge
+
+**Multilingual, patient-led telehealth for a more connected care journey.**
+
+Health Bridge is an Indian-language-first healthcare application built around patient
+onboarding, verified doctor discovery, consent-based AI conversations, cautious triage,
+and appointment scheduling. Patients stay in control of whether to book; doctors review
+their assigned appointments and clinical handoff notes.
+
+> Phases 1–7 are implemented on `main`. This is an actively developed product foundation,
+> not a substitute for medical care. AI output is an intake aid for clinician review, not a
+> diagnosis or treatment recommendation.
+
+## What it does
+
+- Email registration, verification, sign-in, and role-aware navigation.
+- Guided onboarding, profile settings, and image upload.
+- Doctor directory limited to verified clinicians, with profiles and consultation modes.
+- Consent-gated text conversations with optional Vapi voice sessions in the same thread.
+- Risk-aware intake: critical, uncertain, or unavailable review stops a typed intake and
+  blocks any appointment suggestion.
+- Patient-requested, validated care summary saved as triage and SOAP data, with a
+  downloadable, deterministic PDF that carries an explicit "not a diagnosis" disclaimer.
+- Matching against verified doctors by department, language, consultation mode, and
+  available time; one-minute holds, explicit confirmation, cancellation, and rescheduling.
+- Doctor application wizard with document uploads, admin verification, a severity-ordered
+  queue, and editable SOAP notes.
+
+## Architecture
+
+The web app is a Next.js 16 App Router project with React 19 and TypeScript. Server Actions
+and Route Handlers talk to PostgreSQL 17 through Drizzle ORM. Authentication and roles use
+Better Auth; email goes through Resend; private doctor documents live in Cloudflare R2 via
+the S3 SDK. Bounded OpenAI Chat Completions requests drive the conversation and triage
+flows, with Zod validation at the edges. A service worker and a cached doctor directory
+give the app an offline-capable shell.
+
+An optional, experimental statement classifier sits in `ml/`: a CPU-only scikit-learn
+model that labels patient statements by *type* (symptom, duration, medication, allergy,
+history, other) for clinician review. It is called in a Next.js `after()` hook, fails open,
+never touches the emergency path, and is trained only on synthetic, scenario-grouped data.
+No claim is made about real-world clinical performance.
+
+## Boundaries
+
+Not implemented: live video/audio consultation, prescription OCR, medication reminders,
+scheduled follow-ups, external emergency dispatch, and payments. The generated PDF is
+English-only because the built-in fonts cannot preserve Indic scripts.
+
+## Repository
+
+Built and maintained in [Barmanji/healthBridge](https://github.com/Barmanji/healthBridge).

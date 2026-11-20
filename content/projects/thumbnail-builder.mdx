@@ -1,0 +1,58 @@
+---
+title: Thumbnail Builder
+description: Turn one video description into up to three YouTube thumbnails, with face-consistent styles and 16:9, 9:16, and 1:1 crops.
+repository: Barmanji/ThumbnailBuilder_FastAPI
+url: https://github.com/Barmanji/ThumbnailBuilder_FastAPI
+date: "2026-11-19"
+published: true
+desktopSupported: true
+techStack:
+  - React
+  - Vite
+  - TypeScript
+  - FastAPI
+  - OpenAI API
+  - ImageKit
+  - Clerk
+---
+
+# Thumbnail Builder
+
+A React + FastAPI app that turns one video description into up to three YouTube
+thumbnails. Add an optional headshot and every style keeps the same face; each result comes
+back as 16:9, 9:16, and 1:1 crops.
+
+Sign-in is Clerk (Google or email/password). Free accounts start with three credits; one
+generation spends one credit and produces one to three styles.
+
+## How it works
+
+1. The frontend posts a prompt, 1–3 styles, and an optional headshot. The headshot is
+   uploaded to ImageKit first so the model can fetch a public URL.
+2. The API decrements the user's credit in a transaction, creates the job and thumbnail
+   rows, then starts an in-process worker.
+3. Each style calls the OpenAI Responses image tool concurrently — `edit` with a headshot,
+   `generate` without one — and uploads the returned PNG to ImageKit.
+4. Crops are ImageKit transform URLs, so regenerating a crop never calls the model again.
+5. Progress reaches the browser over a short-lived SSE ticket plus React Query polling.
+   Retrying a failed style does not spend another credit.
+
+Job status is derived from thumbnail states rather than set directly by workers, so a job
+moves `pending → processing → completed`, or `failed` when every style errors.
+
+## Stack
+
+The frontend is React 19, TypeScript, Vite, Tailwind 4, React Router, React Query, and
+Clerk. The backend is FastAPI with SQLModel over SQLite, Clerk session verification, the
+OpenAI SDK, and ImageKit. Jobs are owner-scoped — someone else's job returns `404`.
+
+## Notes
+
+- Stream tickets and background tasks are process-local; multiple workers would need
+  shared storage and a real queue.
+- There is no Alembic setup: tables are created if missing but not altered.
+- Vite warns about an ~886 kB bundle; code splitting has not been done yet.
+- Cloudflare Pages for the frontend and Fly.io for the API are the intended targets but
+  are not wired up.
+
+Source: [Barmanji/ThumbnailBuilder_FastAPI](https://github.com/Barmanji/ThumbnailBuilder_FastAPI).
