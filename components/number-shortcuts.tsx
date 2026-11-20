@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import { navItems } from "@/lib/navigation";
 
 function isTypingTarget(target: EventTarget | null) {
@@ -19,7 +20,8 @@ function isTypingTarget(target: EventTarget | null) {
  * Global number navigation:
  *   1-4 -> nav items, 0 -> home (no visual hint for 0).
  * Ignores keystrokes while typing, while a modifier is held, and while a
- * modal dialog is open. Renders a small MacBook-style key HUD on desktop.
+ * modal dialog is open. Pressing a key briefly pops up a single large
+ * MacBook-style keycap that fades away.
  */
 export function NumberShortcuts() {
 	const router = useRouter();
@@ -46,7 +48,7 @@ export function NumberShortcuts() {
 
 			setPressedKey(item.key);
 			if (resetTimer.current) window.clearTimeout(resetTimer.current);
-			resetTimer.current = window.setTimeout(() => setPressedKey(null), 220);
+			resetTimer.current = window.setTimeout(() => setPressedKey(null), 650);
 
 			router.push(item.href);
 		};
@@ -61,23 +63,22 @@ export function NumberShortcuts() {
 	return (
 		<div
 			aria-hidden="true"
-			className="pointer-events-none fixed bottom-5 left-1/2 z-40 hidden -translate-x-1/2 select-none items-end gap-2 md:flex"
+			className="pointer-events-none fixed inset-x-0 bottom-8 z-40 hidden justify-center select-none md:flex"
 		>
-			{navItems.map((item) => {
-				const pressed = pressedKey === item.key;
-				return (
-					<span
-						key={item.key}
-						className={`flex h-9 w-9 items-center justify-center rounded-md border border-zinc-700/80 border-b-[3px] border-b-zinc-950 bg-zinc-800/90 font-kode-mono text-xs text-zinc-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_3px_0_rgba(0,0,0,0.55)] transition-all duration-100 ease-out ${
-							pressed
-								? "translate-y-[2px] scale-[0.96] border-[#ff174f]/60 border-b bg-zinc-700 text-white shadow-[0_0_18px_rgba(255,23,79,0.35)]"
-								: ""
-						}`}
+			<AnimatePresence>
+				{pressedKey && (
+					<motion.span
+						key={pressedKey}
+						initial={{ opacity: 0, y: 18, scale: 0.8 }}
+						animate={{ opacity: 1, y: 0, scale: 1 }}
+						exit={{ opacity: 0, y: -14, scale: 0.92 }}
+						transition={{ duration: 0.18, ease: "easeOut" }}
+						className="flex h-20 w-20 items-center justify-center rounded-xl border border-zinc-700/80 border-b-4 border-b-zinc-950 bg-zinc-800/95 font-kode-mono text-4xl text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_6px_0_rgba(0,0,0,0.55),0_0_30px_rgba(255,23,79,0.18)]"
 					>
-						{item.key}
-					</span>
-				);
-			})}
+						{pressedKey}
+					</motion.span>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 }

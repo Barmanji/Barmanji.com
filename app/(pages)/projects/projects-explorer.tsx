@@ -28,18 +28,17 @@ export function ProjectsExplorer({ projects, views }: Props) {
 		Boolean,
 	) as string[];
 
-	const sorted = projects
+	// Pinned projects render above the filters and are never filtered out.
+	const others = projects
 		.filter((project) => !pinnedSlugs.includes(project.slug))
 		.sort(sortByDate);
 
 	const filtered =
 		activeFilter === "all"
-			? projects
-			: projects
-					.filter((project) =>
-						getProjectFilters(project.techStack).includes(activeFilter),
-					)
-					.sort(sortByDate);
+			? others
+			: others.filter((project) =>
+					getProjectFilters(project.techStack).includes(activeFilter),
+				);
 
 	const counts = { all: projects.length } as Record<FilterId, number>;
 	for (const filter of filters) {
@@ -49,14 +48,14 @@ export function ProjectsExplorer({ projects, views }: Props) {
 		).length;
 	}
 
-	const visible = activeFilter === "all" ? sorted : filtered;
+	const visible = filtered;
 	const activeLabel =
 		filters.find((filter) => filter.id === activeFilter)?.label ?? "All";
 
 	return (
 		<div className="space-y-8 md:space-y-12">
-			{activeFilter === "all" && (
-				<div className="grid grid-cols-1 gap-8 mx-auto lg:grid-cols-2 ">
+			{/* Pinned projects — always shown, never affected by filters. */}
+			<div className="grid grid-cols-1 gap-8 mx-auto lg:grid-cols-2 ">
 					{featured && (
 						<Card>
 							<Link href={`/projects/${featured.slug}`}>
@@ -130,7 +129,8 @@ export function ProjectsExplorer({ projects, views }: Props) {
 						))}
 					</div>
 				</div>
-			)}
+
+			<div className="hidden w-full h-px md:block bg-zinc-800" />
 
 			<div className="flex flex-col gap-3">
 				<div
@@ -179,11 +179,9 @@ export function ProjectsExplorer({ projects, views }: Props) {
 				<p className="text-[11px] tracking-[0.18em] uppercase text-zinc-600">
 					{activeFilter === "all"
 						? `${counts.all} projects`
-						: `${filtered.length} ${activeLabel} project${filtered.length === 1 ? "" : "s"}`}
+						: `${visible.length} ${activeLabel} project${visible.length === 1 ? "" : "s"}`}
 				</p>
 			</div>
-
-			<div className="hidden w-full h-px md:block bg-zinc-800" />
 
 			{visible.length === 0 ? (
 				<p className="py-12 text-sm text-zinc-500">
