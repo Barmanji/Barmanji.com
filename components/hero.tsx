@@ -3,10 +3,13 @@ import Particles from "./particles";
 import { HeroTitle } from "./hero-title";
 import { Kbd } from "@/components/ui/kbd";
 import { navItems } from "@/lib/navigation";
+import { MobileHero } from "./mobile-hero";
 
 export default function Hero() {
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen overflow-hidden bg-gradient-to-tl from-black via-zinc-600/20 to-black">
+    <>
+      <MobileHero />
+      <div className="hidden flex-col items-center justify-center w-screen h-screen overflow-hidden bg-gradient-to-tl from-black via-zinc-600/20 to-black md:flex">
       <nav className="my-12 animate-fade-in">
         <ul className="flex items-start justify-center gap-5 md:gap-7">
           {navItems.map((item) => (
@@ -41,37 +44,21 @@ export default function Hero() {
               🙏
             </span>
           </span>
-          , I am{" "}
-          <Link
-            target="_blank"
-            href="https://www.linkedin.com/in/ajay-barman-0b37011a7/"
-            className="underline duration-500 hover:text-zinc-300"
-          >
-            Ajay Barman{" "}
-          </Link>{" "}
-          (also known as{" "}
-          <Link
-            target="_blank"
-            href="https://github.com/Barmanji/"
-            className="font-bold duration-500 hover:text-zinc-300"
-          >
-            Barmanji
-          </Link>
-          ) a software craftsman based in{" "}
+          , I am a software craftsman based in{" "}
           <Link
             target="_blank"
             href="https://www.g20.in"
             className="font-bold duration-500 hover:text-zinc-300"
           >
-            India
-          </Link>
-          . Currently dating{" "}
+            India.
+          </Link>{" "}
+          Building High performant end to end systems. Currently dating{" "}
           <Link
             target="_blank"
-            href="https://tanstack.com/query/latest"
+            href="https://www.ibm.com/think/topics/agentic-architecture"
             className="underline duration-500 hover:text-zinc-300"
           >
-            TanstackQuery
+            Agentic Systems
           </Link>{" "}
           and{" "}
           <Link
@@ -108,10 +95,13 @@ className="relative text-zinc-300 duration-500 hover:text-zinc-300 after:absolut
               <span className="block sm:inline">NeoVim</span>
               <span className="hidden md:inline"> | </span>
               <span className="block sm:inline">Arch BTW</span>
+              <span className="hidden md:inline"> | </span>
+              <span className="block sm:inline">Claude Code</span>
             </span>
           </p>
         </h2>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

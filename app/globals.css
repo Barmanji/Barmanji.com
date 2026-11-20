@@ -16,6 +16,29 @@
   --animate-title: title 3s ease-out forwards;
   --animate-fade-left: fade-left 3s ease-in-out forwards;
   --animate-fade-right: fade-right 3s ease-in-out forwards;
+  --animate-rise: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-float: float 14s ease-in-out infinite;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(0, -18px, 0) scale(1.08);
+    }
+  }
 
   @keyframes fade-in {
     0% {
@@ -100,7 +123,8 @@
 html.barmanji-no-intro .animate-fade-in,
 html.barmanji-no-intro .animate-title,
 html.barmanji-no-intro .animate-fade-left,
-html.barmanji-no-intro .animate-fade-right {
+html.barmanji-no-intro .animate-fade-right,
+html.barmanji-no-intro .animate-rise {
   animation: none;
 }
 
