@@ -1,27 +1,27 @@
 import Link from "next/link";
 import Particles from "./particles";
 import { HeroTitle } from "./hero-title";
-
-const navigation = [
-  { name: "Projects", href: "/projects" },
-  { name: "Competencies", href: "/skills" },
-  { name: "Contacts", href: "/contact" },
-  { name: "Resume", href: "/resume" },
-];
+import { Kbd } from "@/components/ui/kbd";
+import { navItems } from "@/lib/navigation";
 
 export default function Hero() {
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen overflow-hidden bg-gradient-to-tl from-black via-zinc-600/20 to-black">
       <nav className="my-12 animate-fade-in">
-        <ul className="flex items-center justify-center gap-4">
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`${item.href === "/skills" ? "hidden md:block" : ""} text-1xl duration-500 text-zinc-500 hover:text-zinc-300`}
-            >
-              {item.name}
-            </Link>
+        <ul className="flex items-start justify-center gap-5 md:gap-7">
+          {navItems.map((item) => (
+            <li key={item.href} className={item.mobileHidden ? "hidden md:block" : ""}>
+              <Link
+                href={item.href}
+                aria-keyshortcuts={item.key}
+                className="group flex flex-col items-center gap-1.5 text-zinc-500 duration-500 hover:text-zinc-300"
+              >
+                <Kbd className="transition-colors group-hover:border-zinc-500 group-hover:text-zinc-300">
+                  [{item.key}]
+                </Kbd>
+                <span className="text-1xl">{item.name}</span>
+              </Link>
+            </li>
           ))}
         </ul>
       </nav>
