@@ -4,7 +4,7 @@ import { EcosystemGrid } from "@/components/ecosystems/ecosystem-grid";
 import { ecosystems } from "@/lib/ecosystems";
 
 export const metadata: Metadata = {
-	title: "Skills",
+	title: "Stack",
 	description:
 		"Languages, runtimes, and tools behind the projects: Rust, Go, Python, Next.js, databases, AI agents, infrastructure, and Neovim.",
 };
@@ -16,7 +16,7 @@ const stats = [
 	{ label: "Editor", value: "Neovim" },
 ];
 
-export default function SkillsPage() {
+export default function StackPage() {
 	return (
 		<div className="min-h-screen pb-24 bg-gradient-to-tl from-zinc-900/0 via-zinc-900 to-zinc-900/0">
 			<Navigation />
@@ -24,10 +24,10 @@ export default function SkillsPage() {
 				<div className="max-w-2xl">
 					<p className="font-kode-mono text-[10px] uppercase tracking-[0.3em] text-zinc-500">
 						<span className="text-[#ff174f]">{"//"}</span> Core Engineering
-						Skills
+						Ecosystems
 					</p>
 					<h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl">
-						The skills behind the work
+						The stack behind the work
 					</h1>
 					<p className="mt-4 text-zinc-400">
 						Languages, runtimes, and tools I actually build with. Tap any card
