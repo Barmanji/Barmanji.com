@@ -2,6 +2,7 @@ import Link from "next/link";
 import { allProjects } from "@/.contentlayer/generated";
 import { Navigation } from "../../../components/nav";
 import { Card } from "../../../components/card";
+import { TechStack } from "@/components/tech-stack";
 import { Article } from "./article";
 import { Redis } from "@upstash/redis";
 import { Eye, Smartphone, Monitor } from "lucide-react";
@@ -83,6 +84,7 @@ export default async function ProjectsPage() {
                 <p className="mt-4 leading-8 duration-150 text-zinc-400 group-hover:text-zinc-300">
                   {featured.description}
                 </p>
+                <TechStack items={featured.techStack} />
                 <p className="mt-4 leading-8 duration-150 text-zinc-400 group-hover:text-zinc-300">
                   <span className="font-bold text-sm">Best Experience on</span>
                   {featured.mobileSupported && <Smartphone className="inline-block w-4 h-4 ml-2" color="#e11d48" />}
