@@ -35,6 +35,10 @@ export const Project = defineDocumentType(() => ({
 			type: "string",
 			required: true,
 		},
+		techStack: {
+			type: "list",
+			of: { type: "string" },
+		},
 		date: {
 			type: "date",
 		},

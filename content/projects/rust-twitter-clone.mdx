@@ -1,0 +1,56 @@
+---
+title: Twitter Clone in Rust
+description: A Twitter-style fullstack app in Rust — an Axum + SQLx API with a Leptos frontend.
+repository: Barmanji/Twitter-clone
+url: https://github.com/Barmanji/Twitter-clone
+date: "2026-10-16"
+published: true
+desktopSupported: true
+mobileSupported: true
+techStack:
+  - Rust
+  - Axum
+  - SQLx
+  - PostgreSQL
+  - Leptos
+  - Tauri
+---
+
+# Twitter Clone in Rust
+
+A Twitter-style fullstack project built in Rust. The API is an Axum service backed by
+PostgreSQL through SQLx; the frontend is a Leptos workspace that can render on the web or
+ship as a desktop/mobile app with Tauri.
+
+## Backend
+
+The backend uses Axum 0.8 with Tokio, SQLx with the Postgres and UUID features, serde for
+JSON, and tower-http for CORS. Schema work uses `sqlx::uuid` and `time` types, and
+configuration is read through `dotenvy`. The service covers the usual auth, posts, and
+timeline shape of a microblogging app.
+
+## Frontend
+
+The Leptos workspace splits into an `app` library and an `axum` server. Beyond the web
+build (`cargo leptos watch`), the same UI runs under Tauri on desktop, iOS, and Android.
+Styling is Tailwind with `tw_merge`, state is plain Leptos signals, and browser storage is
+reached through `web-sys`. The cross-platform starter setup comes from Francesco Ciulla's
+[rust-twitter-clone](https://github.com/FrancescoXX/rust-twitter-clone), credited in the
+repository.
+
+## Running it
+
+```bash
+# web
+cargo leptos watch
+
+# desktop
+cargo tauri dev
+
+# api (from twitter-clone-backend)
+cargo run
+```
+
+Requires a nightly Rust toolchain with Leptos, `Just`, Tauri, and PostgreSQL available.
+
+Source: [Barmanji/Twitter-clone](https://github.com/Barmanji/Twitter-clone).

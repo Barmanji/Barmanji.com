@@ -1,6 +1,7 @@
 import type { Project } from "@/.contentlayer/generated";
 import Link from "next/link";
 import { Eye, Smartphone, Monitor } from "lucide-react";
+import { TechStack } from "@/components/tech-stack";
 
 type Props = {
 	project: Project;
@@ -34,6 +35,7 @@ export const Article: React.FC<Props> = ({ project, views }) => {
 				<p className="z-20 mt-4 text-sm  duration-1000 text-zinc-400 group-hover:text-zinc-200">
 					{project.description}
 				</p>
+				<TechStack items={project.techStack} />
 				<p className="mt-4 leading-8 duration-150 text-zinc-400 group-hover:text-zinc-300">
 					<span className="font-bold text-sm">Best Experience on</span>
 					{project.mobileSupported && <Smartphone className="inline-block w-4 h-4 ml-2" color="#e11d48" />}
