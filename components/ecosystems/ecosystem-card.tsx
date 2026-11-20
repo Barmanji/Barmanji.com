@@ -26,19 +26,19 @@ export function EcosystemCard({
 				/>
 
 				<div className="flex items-center justify-between gap-3">
-					<span className="font-kode-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500 sm:text-[11px]">
+					<span className="font-kode-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500 transition-colors duration-1000 group-hover:text-zinc-300 sm:text-[11px]">
 						<span style={{ color: item.accent }}>[{item.index}]</span>{" "}
 						{item.label}
 					</span>
-					<span className="shrink-0 rounded-full border border-zinc-700/70 px-2 py-0.5 font-kode-mono text-[9px] uppercase tracking-wider text-zinc-400 sm:px-2.5 sm:py-1 sm:text-[10px]">
+					<span className="shrink-0 rounded-full border border-zinc-700/70 px-2 py-0.5 font-kode-mono text-[9px] uppercase tracking-wider text-zinc-400 transition-colors duration-1000 group-hover:border-zinc-500 group-hover:text-zinc-200 sm:px-2.5 sm:py-1 sm:text-[10px]">
 						{item.status}
 					</span>
 				</div>
 
-				<h3 className="mt-4 font-display text-xl text-zinc-100 transition-colors group-hover:text-white">
+				<h3 className="mt-4 font-display text-xl text-zinc-100 transition-colors duration-1000 group-hover:text-white">
 					{item.title}
 				</h3>
-				<p className="mt-2 text-sm leading-6 text-zinc-400 sm:text-[15px] sm:leading-7">
+				<p className="mt-2 text-sm leading-6 text-zinc-400 transition-colors duration-1000 group-hover:text-zinc-200 sm:text-[15px] sm:leading-7">
 					{item.summary}
 				</p>
 
@@ -49,14 +49,14 @@ export function EcosystemCard({
 						.map((tag) => (
 							<span
 								key={tag}
-								className="rounded border border-zinc-800 bg-zinc-900/60 px-1.5 py-0.5 font-kode-mono text-[10px] text-zinc-500 sm:text-[11px]"
+								className="rounded border border-zinc-800 bg-zinc-900/60 px-1.5 py-0.5 font-kode-mono text-[10px] text-zinc-500 transition-colors duration-1000 group-hover:border-zinc-700 group-hover:text-zinc-300 sm:text-[11px]"
 							>
 								{tag}
 							</span>
 						))}
 				</div>
 
-				<span className="mt-6 inline-flex items-center gap-1 font-kode-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500 transition-colors group-hover:text-zinc-200 sm:text-[11px]">
+				<span className="mt-6 inline-flex items-center gap-1 font-kode-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500 transition-colors duration-1000 group-hover:text-zinc-200 sm:text-[11px]">
 					Open details <ArrowUpRight className="h-3.5 w-3.5" />
 				</span>
 			</button>
