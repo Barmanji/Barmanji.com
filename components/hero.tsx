@@ -16,7 +16,7 @@ export default function Hero() {
                 aria-keyshortcuts={item.key}
                 className="group flex flex-col items-center gap-1.5 text-zinc-500 duration-500 hover:text-zinc-300"
               >
-                <Kbd className="transition-colors group-hover:border-zinc-500 group-hover:text-zinc-300">
+                <Kbd className="hidden transition-colors group-hover:border-zinc-500 group-hover:text-zinc-300 md:inline-flex">
                   [{item.key}]
                 </Kbd>
                 <span className="text-1xl">{item.name}</span>

@@ -42,7 +42,7 @@ export const Navigation: React.FC = () => {
                   className={`${item.mobileHidden ? "hidden md:flex" : "flex"} flex-col items-center gap-1 duration-200 ${active ? "text-white" : "text-zinc-400 hover:text-zinc-100"} font-kode-mono`}
                 >
                   <span>{item.name}</span>
-                  <Kbd className={active ? "border-zinc-500 text-zinc-300" : ""}>
+                  <Kbd className={`hidden md:inline-flex ${active ? "border-zinc-500 text-zinc-300" : ""}`}>
                     [{item.key}]
                   </Kbd>
                 </Link>

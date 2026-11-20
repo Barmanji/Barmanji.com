@@ -21,7 +21,7 @@ export type Ecosystem = {
 	proof: EcosystemProof[];
 };
 
-export const ecosystems: Ecosystem[] = [
+const ecosystemList: Ecosystem[] = [
 	{
 		id: "rust",
 		index: "01",
@@ -63,9 +63,16 @@ export const ecosystems: Ecosystem[] = [
 		],
 		proof: [
 			{ slug: "v0-clone", title: "V0-clone" },
-			{ slug: "threadly", title: "Threadly" },
+			{ slug: "blazejet", title: "Blaze Jet" },
 			{ slug: "codeleet", title: "CodeLeet" },
+			{ slug: "health-bridge", title: "Health Bridge" },
+			{ slug: "reels-pro", title: "Reels Pro" },
 			{ slug: "t3-chat-clone", title: "T3-Chat-Clone" },
+			{ slug: "threadly", title: "Threadly" },
+			{ slug: "thumbnail-builder", title: "Thumbnail Builder" },
+			{ slug: "anonymous", title: "Anonymous Messenger" },
+			{ slug: "megablog", title: "MegaBlog" },
+			{ slug: "barmanji.com", title: "Barmanji.com" },
 		],
 	},
 	{
@@ -132,6 +139,10 @@ export const ecosystems: Ecosystem[] = [
 			{ slug: "codeleet", title: "CodeLeet" },
 			{ slug: "threadly", title: "Threadly" },
 			{ slug: "t3-chat-clone", title: "T3-Chat-Clone" },
+			{ slug: "blazejet", title: "Blaze Jet" },
+			{ slug: "v0-clone", title: "V0-clone" },
+			{ slug: "reels-pro", title: "Reels Pro" },
+			{ slug: "anonymous", title: "Anonymous Messenger" },
 		],
 	},
 	{
@@ -156,6 +167,7 @@ export const ecosystems: Ecosystem[] = [
 			{ slug: "health-bridge", title: "Health Bridge" },
 			{ slug: "thumbnail-builder", title: "Thumbnail Builder" },
 			{ slug: "t3-chat-clone", title: "T3-Chat-Clone" },
+			{ slug: "clawd-code", title: "Clawd Code" },
 		],
 	},
 	{
@@ -179,6 +191,8 @@ export const ecosystems: Ecosystem[] = [
 			{ slug: "codeleet", title: "CodeLeet" },
 			{ slug: "blazejet", title: "Blaze Jet" },
 			{ slug: "t3-chat-clone", title: "T3-Chat-Clone" },
+			{ slug: "health-bridge", title: "Health Bridge" },
+			{ slug: "v0-clone", title: "V0-clone" },
 		],
 	},
 	{
@@ -204,3 +218,21 @@ export const ecosystems: Ecosystem[] = [
 		],
 	},
 ];
+
+// Display order: Next.js, Rust, Python, AI, Go, Databases, DevOps, Tooling.
+const ecosystemOrder = [
+	"next",
+	"rust",
+	"python",
+	"ai",
+	"go",
+	"databases",
+	"devops",
+	"tooling",
+];
+
+export const ecosystems: Ecosystem[] = ecosystemOrder.map((id, index) => {
+	const item = ecosystemList.find((ecosystem) => ecosystem.id === id);
+	if (!item) throw new Error(`Unknown ecosystem: ${id}`);
+	return { ...item, index: String(index + 1).padStart(2, "0") };
+});

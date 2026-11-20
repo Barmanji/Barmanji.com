@@ -20,7 +20,7 @@ export default function StackPage() {
 	return (
 		<div className="min-h-screen pb-24 bg-gradient-to-tl from-zinc-900/0 via-zinc-900 to-zinc-900/0">
 			<Navigation />
-			<div className="px-6 pt-28 mx-auto max-w-7xl lg:px-8">
+			<div className="px-5 pt-24 mx-auto max-w-7xl sm:px-6 sm:pt-28 lg:px-8">
 				<div className="max-w-2xl">
 					<p className="font-kode-mono text-[10px] uppercase tracking-[0.3em] text-zinc-500">
 						<span className="text-[#ff174f]">{"//"}</span> Core Engineering
