@@ -18,6 +18,7 @@
   --animate-fade-right: fade-right 3s ease-in-out forwards;
   --animate-rise: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-float: float 14s ease-in-out infinite;
+  --animate-press-me: press-me 6.5s ease-in-out 3.2s both;
 
   @keyframes rise {
     from {
@@ -37,6 +38,25 @@
     }
     50% {
       transform: translate3d(0, -18px, 0) scale(1.08);
+    }
+  }
+
+  @keyframes press-me {
+    0% {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    8% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    70% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-6px);
     }
   }
 
@@ -98,6 +118,27 @@
       opacity: 100%;
     }
   }
+}
+
+/* Hand-drawn stroke reveal for the Projects hint arrow. */
+.press-me-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: press-me-draw 1.1s ease-out 3.2s both;
+}
+
+@keyframes press-me-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Returning visitors skip the 3s slide intro, so show the hint sooner. */
+html.barmanji-no-intro .animate-press-me {
+  animation-delay: 0.2s;
+}
+html.barmanji-no-intro .press-me-path {
+  animation-delay: 0.2s;
 }
 
 @layer base {

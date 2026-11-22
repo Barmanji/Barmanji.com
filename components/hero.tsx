@@ -4,13 +4,14 @@ import { HeroTitle } from "./hero-title";
 import { Kbd } from "@/components/ui/kbd";
 import { navItems } from "@/lib/navigation";
 import { MobileHero } from "./mobile-hero";
+import { PressMeArrow } from "./press-me-arrow";
 
 export default function Hero() {
   return (
     <>
       <MobileHero />
       <div className="hidden flex-col items-center justify-center w-screen h-screen overflow-hidden bg-gradient-to-tl from-black via-zinc-600/20 to-black md:flex">
-      <nav className="my-12 animate-fade-in">
+      <nav className="relative my-12 animate-fade-in">
         <ul className="flex items-start justify-center gap-5 md:gap-7">
           {navItems.map((item) => (
             <li key={item.href} className={item.mobileHidden ? "hidden md:block" : ""}>
@@ -27,6 +28,7 @@ export default function Hero() {
             </li>
           ))}
         </ul>
+        <PressMeArrow />
       </nav>
       <div className="intro-line hidden w-screen h-px animate-glow md:block animate-fade-left bg-gradient-to-r from-zinc-300/0 via-zinc-300/50 to-zinc-300/0" />
       <Particles
