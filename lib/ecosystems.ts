@@ -13,7 +13,7 @@ export type Ecosystem = {
 	index: string;
 	label: string;
 	title: string;
-	status: "Production" | "Advanced" | "Working";
+	status: "Production" | "Advanced" | "Working" | "Foundational";
 	accent: string;
 	summary: string;
 	description: string;
@@ -26,8 +26,8 @@ const ecosystemList: Ecosystem[] = [
 		id: "rust",
 		index: "01",
 		label: "Systems & Low Level",
-		title: "Rust & Bare-Metal Engines",
-		status: "Production",
+		title: "Rust & Systems Programming",
+		status: "Working",
 		accent: "#f97316",
 		summary:
 			"TCP/HTTP servers, ownership, threads, and zero-drama request paths.",
@@ -47,8 +47,8 @@ const ecosystemList: Ecosystem[] = [
 	{
 		id: "next",
 		index: "02",
-		label: "Frontend & Applications",
-		title: "Next.js & Frontend Systems",
+		label: "FullStack Applications",
+		title: "Next.js & FullStack Systems",
 		status: "Production",
 		accent: "#3b82f6",
 		summary:
@@ -80,7 +80,7 @@ const ecosystemList: Ecosystem[] = [
 		index: "03",
 		label: "Concurrency & Tooling",
 		title: "Go Concurrency & APIs",
-		status: "Advanced",
+		status: "Foundational",
 		accent: "#14b8a6",
 		summary:
 			"Goroutines, channels, CLI ergonomics, and agent loops that keep moving.",
@@ -99,7 +99,7 @@ const ecosystemList: Ecosystem[] = [
 		index: "04",
 		label: "Python & Async",
 		title: "Python & Async Automation",
-		status: "Production",
+		status: "Advanced",
 		accent: "#eab308",
 		summary:
 			"Django, FastAPI, SQLModel, and ML pipelines that stay readable.",

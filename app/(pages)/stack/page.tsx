@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 
 const stats = [
 	{ label: "Languages", value: "4+" },
-	{ label: "Projects", value: "27" },
+	{ label: "Projects", value: "27+" },
 	{ label: "Ecosystems", value: String(ecosystems.length) },
-	{ label: "Editor", value: "Neovim" },
+	{ label: "Editor", value: "Neovim + Claude/Open-Code" },
 ];
 
 export default function StackPage() {

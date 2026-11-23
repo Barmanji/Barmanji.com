@@ -98,7 +98,7 @@ export default function Contact() {
         </section>
 
         {/* Social */}
-        <section className="mt-14">
+        <section className="mt-10">
           <div className="flex items-center gap-4">
             <h2 className="shrink-0 font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
               Social
@@ -183,7 +183,7 @@ export default function Contact() {
         </section>
 
         {/* Direct message */}
-        <section id="message-form" className="mt-11 scroll-mt-28">
+        <section id="message-form" className="mt-12 scroll-mt-28">
           <div className="flex items-center gap-4">
             <h2 className="shrink-0 font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
               Direct message
