@@ -21,9 +21,9 @@ const sortByDate = (a: ProjectCardData, b: ProjectCardData) =>
 export function ProjectsExplorer({ projects, views }: Props) {
 	const [activeFilter, setActiveFilter] = useState<FilterId>("all");
 
-	const featured = projects.find((project) => project.slug === "v0-clone");
-	const top2 = projects.find((project) => project.slug === "codeleet");
-	const top3 = projects.find((project) => project.slug === "threadly");
+	const top2 = projects.find((project) => project.slug === "v0-clone");
+	const top3 = projects.find((project) => project.slug === "codeleet");
+	const featured = projects.find((project) => project.slug === "threadly");
 	const pinnedSlugs = [featured?.slug, top2?.slug, top3?.slug].filter(
 		Boolean,
 	) as string[];
