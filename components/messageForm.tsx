@@ -1,10 +1,15 @@
 "use client";
-import { TextareaAutosize, Snackbar } from "@mui/material";
-import { useState } from "react";
-import { MessageSquare, User, Mail, Send } from "lucide-react";
+import { Snackbar } from "@mui/material";
+import { useState, type FormEvent } from "react";
+import { MessageSquare, User, Mail } from "lucide-react";
+import UseAnimations from "react-useanimations";
+import send from "react-useanimations/lib/send";
 import { useForm } from "@formspree/react";
 
 import { Card } from "../components/card";
+
+const fieldClass =
+  "w-full rounded-lg border border-zinc-700/80 bg-zinc-900/50 px-3 py-2.5 font-mono text-sm text-zinc-100 outline-none transition-colors duration-300 placeholder:text-zinc-500 focus:border-[#ff174f]/50 focus:bg-zinc-900/80";
 
 export default function MessageForm() {
   const [formData, setFormData] = useState({
@@ -12,7 +17,7 @@ export default function MessageForm() {
     name: "",
     email: "",
   });
-  const [_state, handleSubmit] = useForm(
+  const [, handleSubmit] = useForm(
     process.env.NEXT_PUBLIC_FORMSPREE_TOKEN || "",
   );
   const [showMessageSentAlert, setShowMessageSentAlert] = useState(false);
@@ -20,7 +25,8 @@ export default function MessageForm() {
   const [showMessageNotSentAlert, setShowMessageNotSentAlert] = useState(false);
   const [timeoutId, setTimeoutId] = useState<number | undefined>(undefined);
 
-  const handleFormSubmit = async (event: any) => { event.preventDefault();
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!isEmailValid(formData.email)) {
       setShowEmailInvalidAlert(true);
     } else {
@@ -61,36 +67,17 @@ export default function MessageForm() {
 
   return (
     <div>
-      <form
-        onSubmit={handleFormSubmit}
-        className="flex items-center justify-center pl-10 pr-10 sm:pl-32 sm:pr-32"
-      >
-        <div className="grid w-full grid-cols-1 xs:grid-cols-1 sm:mt-0 sm:grid-cols-1 md:grid-cols-3 lg:gap-5 lg:grid-cols-3 xl:grid-cols-3">
-          <div className="flex flex-col gap-2 col-span-2 md:mr-5 mb-5 md:mb-0">
-            <div
-              className="text-white flex flex-row items-center gap-2 font-kode-mono"
-              style={{ fontSize: 15 }}
-            >
-              <MessageSquare size={20} className="text-sea-green" />
+      <form onSubmit={handleFormSubmit} className="w-full">
+        <div className="grid w-full grid-cols-1 gap-5 md:grid-cols-3">
+          <div className="col-span-2 flex flex-col gap-2">
+            <div className="flex flex-row items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-zinc-400">
+              <MessageSquare size={16} className="text-zinc-400" />
               Message
             </div>
-            <TextareaAutosize
+            <textarea
               value={formData.message}
-              minRows={6}
-              maxRows={10}
-              style={{
-                overflow: "auto",
-                color: "white", // Change text color to white
-                backgroundColor: "#1f1f1f",
-                border: "1px solid #6c6c74",
-                padding: 10,
-                borderRadius: 5,
-                fontSize: "small",
-                width: "100%",
-                height: "calc(7% - 20px)", // Keep height calculation
-                boxSizing: "border-box", // Include padding in height calculation
-              }}
-              className="font-kode-mono placeholder-input"
+              rows={6}
+              className={`${fieldClass} min-h-[10rem] flex-1 resize-none`}
               id="message"
               name="message"
               placeholder="Type your message here"
@@ -100,13 +87,11 @@ export default function MessageForm() {
               }
             />
           </div>
-          <div className="flex flex-col gap-5 col-span-1 items-stretch w-full">
-            <div className="flex flex-col gap-1 w-full">
-              <div
-                className="text-white flex flex-row items-center gap-2 font-kode-mono"
-                style={{ fontSize: 15 }}
-              >
-                <User size={20} className="text-sea-green" />
+
+          <div className="col-span-1 flex w-full flex-col gap-5">
+            <div className="flex w-full flex-col gap-2">
+              <div className="flex flex-row items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-zinc-400">
+                <User size={16} className="text-zinc-400" />
                 Name
               </div>
               <input
@@ -115,43 +100,21 @@ export default function MessageForm() {
                 name="name"
                 required={true}
                 placeholder="Full Name"
-                style={{
-                  overflow: "auto",
-                  color: "#ffffff",
-                  backgroundColor: "#1f1f1f",
-                  border: "1px solid #6c6c74",
-                  padding: 10,
-                  borderRadius: 5,
-                  width: "100%",
-                  fontSize: "small",
-                }}
-                className="font-kode-mono placeholder-input"
+                className={fieldClass}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
               />
             </div>
-            <div className="flex flex-col gap-1 w-full">
-              <div
-                className="text-white flex flex-row items-center gap-2 font-kode-mono"
-                style={{ fontSize: 15 }}
-              >
-                <Mail size={20} className="text-sea-green" />
+
+            <div className="flex w-full flex-col gap-2">
+              <div className="flex flex-row items-center gap-2 font-mono text-[11px] uppercase tracking-[0.24em] text-zinc-400">
+                <Mail size={16} className="text-zinc-400" />
                 Email
               </div>
               <input
                 value={formData.email}
-                style={{
-                  overflow: "auto",
-                  color: "#ffffff",
-                  backgroundColor: "#1f1f1f",
-                  border: "1px solid #6c6c74",
-                  padding: 10,
-                  borderRadius: 5,
-                  width: "100%",
-                  fontSize: "small",
-                }}
-                className="font-kode-mono placeholder-input"
+                className={fieldClass}
                 type="email"
                 name="email"
                 placeholder="Email Address"
@@ -162,18 +125,23 @@ export default function MessageForm() {
               />
             </div>
 
-            <div
-              style={{ position: "relative", marginTop: "20px", zIndex: 0 }}
-              className="flex flex-col gap-1 w-full flex-1"
-            >
+            <div className="relative mt-auto flex w-full flex-col gap-1">
               <Card className="h-full">
-                <button
-                  type="submit"
-                  className="flex text-white rounded-lg gap-2 w-full h-full justify-center items-center font-kode-mono py-4 px-6 cursor-pointer hover:opacity-80 transition-opacity"
-                >
-                  Send
-                  <Send size={16} />
-                </button>
+                <UseAnimations
+                  animation={send}
+                  size={16}
+                  interaction="hover-replay"
+                  render={(eventProps, animationProps) => (
+                    <button
+                      type="submit"
+                      className="group/send relative flex h-full w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg border border-zinc-700/80 bg-zinc-900/40 px-6 py-4 font-mono text-[11px] uppercase tracking-[0.24em] text-zinc-200 transition-colors duration-500 hover:border-zinc-500 hover:bg-zinc-900/70 hover:text-white"
+                      {...eventProps}
+                    >
+                      <span className="relative">Send</span>
+                      <span {...animationProps} />
+                    </button>
+                  )}
+                />
               </Card>
               {showMessageSentAlert && (
                 <Snackbar

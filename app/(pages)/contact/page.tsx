@@ -1,42 +1,49 @@
 "use client";
-import {  Mail, ArrowDown, } from "lucide-react";
-import { LuGithub as Github, LuLinkedin as Linkedin } from "react-icons/lu";
-import { RiTwitterXLine as Twitter } from "react-icons/ri";
+
 import Link from "next/link";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { useEffect, useRef } from "react";
+import UseAnimations, { type Animation } from "react-useanimations";
+import github from "react-useanimations/lib/github";
+import linkedin from "react-useanimations/lib/linkedin";
+import mail from "react-useanimations/lib/mail";
+import twitterX from "react-useanimations/lib/twitterX";
 import { Navigation } from "../../../components/nav";
 import { Card } from "../../../components/card";
 import MessageForm from "@/components/messageForm";
-import { useEffect, useRef } from "react";
 
-const socials = [
+const ACCENT = "#ff174f";
+
+type Social = {
+  label: string;
+  handle: string;
+  href: string;
+  animation: Animation;
+};
+
+const socials: Social[] = [
   {
-    icon: <Linkedin size={20} />,
-    href: "https://www.linkedin.com/in/ajay-barman-0b37011a7/",
     label: "LinkedIn",
     handle: "Ajay Barman",
+    href: "https://www.linkedin.com/in/ajay-barman-0b37011a7/",
+    animation: linkedin,
   },
   {
-    icon: <Mail size={20} />,
-    href: "mailto:barmanjiaj@gmail.com",
-    label: "Email",
-    handle: "Barmanjiaj@gmail.com",
-  },
-  {
-    icon: <Twitter size={20} />,
-    href: "https://x.com/ItsBarmanji",
-    label: "Twitter",
-    handle: "ItsBarmanji",
-  },
-  {
-    icon: <Github size={20} />,
-    href: "https://github.com/barmanji",
-    label: "Github",
+    label: "GitHub",
     handle: "Barmanji",
+    href: "https://github.com/barmanji",
+    animation: github,
+  },
+  {
+    label: "X",
+    handle: "ItsBarmanji",
+    href: "https://x.com/ItsBarmanji",
+    animation: twitterX,
   },
 ];
 
 export default function Contact() {
-  const arrowRef = useRef<SVGSVGElement>(null);
+  const arrowRef = useRef<HTMLButtonElement>(null);
 
   const scrollToForm = () => {
     document
@@ -45,25 +52,6 @@ export default function Contact() {
   };
 
   useEffect(() => {
-    const style = document.createElement("style");
-    style.innerHTML = `
-            @keyframes bounce {
-                0%, 20%, 50%, 80%, 100% {
-                    transform: translateY(0);
-                }
-                40% {
-                    transform: translateY(-10px);
-                }
-                60% {
-                    transform: translateY(-5px);
-                }
-            }
-            .bounce {
-                animation: bounce 2s infinite;
-            }
-        `;
-    document.head.appendChild(style);
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -90,137 +78,137 @@ export default function Contact() {
       }
     };
   }, []);
+
   return (
-    <div className="bg-gradient-to-tl from-zinc-900/0 via-zinc-900 to-zinc-900/0 h-full flex flex-col">
+    <div className="min-h-screen bg-zinc-950 bg-gradient-to-tl from-zinc-900 via-zinc-400/10 to-zinc-900">
       <Navigation />
-      <div className="flex-grow flex flex-col items-center w-screen pt-24 pb-10 gap-3 md:pr-32 md:pl-32">
-        <h2 className="text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl pl-6 md:pl-32 w-screen">
-          Social
-        </h2>
-        <div className="w-full h-px bg-zinc-800 mb-5" />
-        <div className="flex items-center flex-col w-screen gap-5 mb-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 w-full md:pl-32 md:pr-32 gap-5 ">
-            {/* LinkedIn */}
-            <Card>
-              <Link
-                href={socials[0].href}
-                target="_blank"
-                className="p-4 relative flex flex-col items-center gap-4 duration-700 group md:gap-8 md:pb-8 lg:pb-24 md:p-16 "
-              >
-                <span
-                  className="absolute w-px h-2/3 bg-gradient-to-b from-zinc-500 via-zinc-500/50 to-transparent"
-                  aria-hidden="true"
+
+      <main className="mx-auto w-full max-w-7xl px-5 pb-24 pt-28 sm:px-6 sm:pt-28 lg:px-8">
+        {/* Intro */}
+        <section className="animate-rise">
+          <h1 className="mt-3 font-display text-3xl font-bold leading-tight tracking-tight text-zinc-100 sm:text-4xl">
+            Let&apos;s build something
+            <span className="ml-[0.12em]" style={{ color: ACCENT }}>.</span>
+          </h1>
+          <p className="mt-4 max-w-xl text-[15px] leading-7 text-zinc-300">
+            Whether it&apos;s a full-time role, a freelance build, or just a
+            question about something on this site, my inbox is open. I usually
+            reply within a day.
+          </p>
+        </section>
+
+        {/* Social */}
+        <section className="mt-14">
+          <div className="flex items-center gap-4">
+            <h2 className="shrink-0 font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
+              Social
+            </h2>
+            <div className="h-px flex-1 bg-gradient-to-r from-zinc-800 to-transparent" />
+            <span className="shrink-0 font-mono text-[11px] tracking-[0.2em] text-zinc-600">
+              01
+            </span>
+          </div>
+
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {socials.map((social) => (
+              <Card key={social.label}>
+                <UseAnimations
+                  animation={social.animation}
+                  size={22}
+                  render={(eventProps, animationProps) => (
+                    <Link
+                      href={social.href}
+                      target="_blank"
+                      aria-label={`${social.label} — ${social.handle}`}
+                      className="group relative flex h-full flex-col gap-5 p-6"
+                      {...eventProps}
+                    >
+                      <span className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-900/60 text-zinc-400 transition-colors duration-500 group-hover:border-[#ff174f]/50 group-hover:text-zinc-100">
+                        <span {...animationProps} />
+                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-base font-medium text-zinc-200 transition-colors duration-500 group-hover:text-white">
+                          {social.handle}
+                        </span>
+                        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-zinc-400 transition-colors duration-500 group-hover:text-zinc-200">
+                          {social.label}
+                        </span>
+                      </div>
+                      <span className="mt-auto flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-500 transition-colors duration-500 group-hover:text-[#ff174f]">
+                        Visit
+                        <ArrowUpRight className="h-3 w-3 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      </span>
+                    </Link>
+                  )}
                 />
-                <span className="text-gray-400 relative z-10 flex items-center justify-center w-12 h-12 text-sm duration-1000 border rounded-full text-sea-green group-hover:text-white group-hover:bg-zinc-900 border-zinc-500 bg-zinc-900 group-hover:border-sea-green drop-shadow-orange">
-                  {socials[0].icon}
-                </span>
-                <div className="z-10 flex flex-col items-center">
-                  <span className="lg:text-xl font-medium duration-150 xl:text-3xl text-zinc-200 group-hover:text-sea-green font-display">
-                    {socials[0].handle}
-                  </span>
-                  <span className="mt-4 text-sm text-center duration-1000 text-zinc-400 group-hover:text-zinc-200 font-kode-mono">
-                    {socials[0].label}
-                  </span>
-                </div>
-              </Link>
-            </Card>
-
-            {/* GitHub + Twitter Combined */}
-            <div className="grid grid-cols-2 gap-5">
-              {/* GitHub */}
-              <Card>
-                <Link
-                  href={socials[3].href}
-                  target="_blank"
-                  className="p-4 relative flex flex-col items-center gap-4 duration-700 group md:gap-8 md:pb-8 lg:pb-24 md:p-16"
-                >
-                  <span
-                    className="absolute w-px h-2/3 bg-gradient-to-b from-zinc-500 via-zinc-500/50 to-transparent"
-                    aria-hidden="true"
-                  />
-                  <span className=" text-gray-400 relative z-10 flex items-center justify-center w-12 h-12 text-sm duration-1000 border rounded-full text-sea-green group-hover:text-white group-hover:bg-zinc-900 border-zinc-500 bg-zinc-900 group-hover:border-sea-green drop-shadow-orange">
-                    {socials[3].icon}
-                  </span>
-                  <div className="z-10 flex flex-col items-center">
-                    <span className="lg:text-xl font-medium duration-150 xl:text-3xl text-zinc-200 group-hover:text-sea-green font-display">
-                      {socials[3].handle}
-                    </span>
-                    <span className="mt-4 text-sm text-center duration-1000 text-zinc-400 group-hover:text-zinc-200 font-kode-mono">
-                      {socials[3].label}
-                    </span>
-                  </div>
-                </Link>
               </Card>
+            ))}
+          </div>
 
-              {/* Twitter */}
-              <Card>
-                <Link
-                  href={socials[2].href}
-                  target="_blank"
-                  className="p-4 relative flex flex-col items-center gap-4 duration-700 group md:gap-8 md:pb-8 lg:pb-24 md:p-16"
-                >
-                  <span
-                    className="absolute w-px h-2/3 bg-gradient-to-b from-zinc-500 via-zinc-500/50 to-transparent"
-                    aria-hidden="true"
-                  />
-                  <span className=" text-gray-400 relative z-10 flex items-center justify-center w-12 h-12 text-sm duration-1000 border rounded-full text-sea-green group-hover:text-white group-hover:bg-zinc-900 border-zinc-500 bg-zinc-900 group-hover:border-sea-green drop-shadow-orange">
-                    {socials[2].icon}
-                  </span>
-                  <div className="z-10 flex flex-col items-center">
-                    <span className="lg:text-xl font-medium duration-150 xl:text-3xl text-zinc-200 group-hover:text-sea-green font-display">
-                      {socials[2].handle}
-                    </span>
-                    <span className="mt-4 text-sm text-center duration-1000 text-zinc-400 group-hover:text-zinc-200 font-kode-mono">
-                      {socials[2].label}
-                    </span>
-                  </div>
-                </Link>
-              </Card>
-            </div>
-
-            {/* Email */}
+          {/* Email banner */}
+          <div className="mt-4">
             <Card>
-              <Link
-                href={socials[1].href}
-                target="_blank"
-                className="p-4 relative flex flex-col items-center gap-4 duration-700 group md:gap-8 md:pb-8 lg:pb-24 md:p-16"
-              >
-                <span
-                  className="absolute w-px h-2/3 bg-gradient-to-b from-zinc-500 via-zinc-500/50 to-transparent"
-                  aria-hidden="true"
-                />
-                <span className="text-gray-400 relative z-10 flex items-center justify-center w-12 h-12 text-sm duration-1000 border rounded-full text-sea-green group-hover:text-white group-hover:bg-zinc-900 border-zinc-500 bg-zinc-900 group-hover:border-sea-green drop-shadow-orange">
-                  {socials[1].icon}
-                </span>
-                <div className="z-10 flex flex-col items-center">
-                  <span className="lg:text-xl font-medium duration-150 xl:text-3xl text-zinc-200 group-hover:text-sea-green font-display">
-                    {socials[1].handle}
-                  </span>
-                  <span className="mt-4 text-sm text-center duration-1000 text-zinc-400 group-hover:text-zinc-200 font-kode-mono">
-                    {socials[1].label}
-                  </span>
-                </div>
-              </Link>
+              <UseAnimations
+                animation={mail}
+                size={22}
+                render={(eventProps, animationProps) => (
+                  <a
+                    href="mailto:barmanjiaj@gmail.com"
+                    aria-label="Email barmanjiaj@gmail.com"
+                    className="group relative flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between"
+                    {...eventProps}
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-900/60 text-zinc-400 transition-colors duration-500 group-hover:border-[#ff174f]/50 group-hover:text-zinc-100">
+                        <span {...animationProps} />
+                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-zinc-400 transition-colors duration-500 group-hover:text-zinc-200">
+                          Email
+                        </span>
+                        <span className="text-base text-zinc-200 transition-colors duration-500 group-hover:text-white">
+                          barmanjiaj@gmail.com
+                        </span>
+                      </div>
+                    </div>
+                    <span className="inline-flex items-center gap-2 self-start rounded-full border border-zinc-700/80 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-300 transition-all duration-500 group-hover:border-[#ff174f]/60 group-hover:bg-[#ff174f]/10 group-hover:text-white sm:self-auto">
+                      Write to me
+                      <ArrowUpRight className="h-3 w-3" />
+                    </span>
+                  </a>
+                )}
+              />
             </Card>
           </div>
-        </div>
-        <h2 className="text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl pl-6 md:pl-32 w-screen">
-          Direct Message
-        </h2>
-        <div className="w-full h-px bg-zinc-800 mb-5" />
-        <div id="message-form" className="w-screen mb-10">
-          <MessageForm />
-        </div>
-      </div>
-      <div className="fixed bottom-5 right-5">
-        <ArrowDown
-          ref={arrowRef}
-          size={26}
-          className="text-sea-green cursor-pointer bounce"
-          onClick={scrollToForm}
-        />
-      </div>
+        </section>
+
+        {/* Direct message */}
+        <section id="message-form" className="mt-11 scroll-mt-28">
+          <div className="flex items-center gap-4">
+            <h2 className="shrink-0 font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
+              Direct message
+            </h2>
+            <div className="h-px flex-1 bg-gradient-to-r from-zinc-800 to-transparent" />
+            <span className="shrink-0 font-mono text-[11px] tracking-[0.2em] text-zinc-600">
+              02
+            </span>
+          </div>
+
+          <div className="mt-6">
+            <MessageForm />
+          </div>
+        </section>
+      </main>
+
+      <button
+        ref={arrowRef}
+        type="button"
+        onClick={scrollToForm}
+        aria-label="Scroll to the message form"
+        className="fixed bottom-6 right-6 z-40 flex h-11 w-11 animate-bounce items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-900/70 text-zinc-400 backdrop-blur transition-colors hover:border-[#ff174f]/60 hover:text-zinc-100"
+      >
+        <ArrowDown size={18} />
+      </button>
     </div>
   );
 }
-

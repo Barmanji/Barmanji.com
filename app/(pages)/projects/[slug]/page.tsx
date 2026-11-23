@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { allProjects } from "@/.contentlayer/generated";
 import { Mdx } from "@/components/mdx";
@@ -23,6 +24,12 @@ export async function generateStaticParams(): Promise<Props["params"][]> {
     .map((p) => ({
       slug: p.slug,
     }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const project = allProjects.find((project) => project.slug === slug);
+  return { title: project?.title ?? "Project" };
 }
 
 export default async function PostPage({ params }: Props) {

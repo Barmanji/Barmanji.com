@@ -1,7 +1,11 @@
 "use client";
-import { ArrowLeft, Eye, Github, Twitter , Linkedin} from "lucide-react";
+import { ArrowLeft, Eye } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
+import UseAnimations from "react-useanimations";
+import github from "react-useanimations/lib/github";
+import linkedin from "react-useanimations/lib/linkedin";
+import twitterX from "react-useanimations/lib/twitterX";
 
 type Props = {
 	project: {
@@ -67,32 +71,41 @@ export const Header: React.FC<Props> = ({ project, views }) => {
 								views,
 							)}
 						</span>
-						<Link target="_blank" href="https://www.linkedin.com/in/ajay-barman-0b37011a7/">
-							<Linkedin
-								className={`w-6 h-6 duration-200 hover:font-medium ${
-									isIntersecting
-										? " text-zinc-400 hover:text-zinc-100"
-										: "text-zinc-600 hover:text-zinc-900"
-								} `}
-							/>
+						<Link
+							target="_blank"
+							href="https://www.linkedin.com/in/ajay-barman-0b37011a7/"
+							aria-label="LinkedIn"
+							className={`duration-200 transition-colors hover:font-medium ${
+								isIntersecting
+									? " text-zinc-400 hover:text-zinc-100"
+									: "text-zinc-600 hover:text-zinc-900"
+							} `}
+						>
+							<UseAnimations animation={linkedin} size={28} />
 						</Link>
-						<Link target="_blank" href="https://github.com/barmanji">
-							<Github
-								className={`w-6 h-6 duration-200 hover:font-medium ${
-									isIntersecting
-										? " text-zinc-400 hover:text-zinc-100"
-										: "text-zinc-600 hover:text-zinc-900"
-								} `}
-							/>
+						<Link
+							target="_blank"
+							href="https://github.com/barmanji"
+							aria-label="GitHub"
+							className={`duration-200 transition-colors hover:font-medium ${
+								isIntersecting
+									? " text-zinc-400 hover:text-zinc-100"
+									: "text-zinc-600 hover:text-zinc-900"
+							} `}
+						>
+							<UseAnimations animation={github} size={28} />
 						</Link>
-                        		<Link target="_blank" href="https://twitter.com/itsbarmanji">
-							<Twitter
-								className={`w-6 h-6 duration-200 hover:font-medium ${
-									isIntersecting
-										? " text-zinc-400 hover:text-zinc-100"
-										: "text-zinc-600 hover:text-zinc-900"
-								} `}
-							/>
+						<Link
+							target="_blank"
+							href="https://x.com/ItsBarmanji"
+							aria-label="X"
+							className={`duration-200 transition-colors hover:font-medium ${
+								isIntersecting
+									? " text-zinc-400 hover:text-zinc-100"
+									: "text-zinc-600 hover:text-zinc-900"
+							} `}
+						>
+							<UseAnimations animation={twitterX} size={28} />
 						</Link>
 					</div>
 
@@ -122,8 +135,19 @@ export const Header: React.FC<Props> = ({ project, views }) => {
 					<div className="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
 						<div className="grid grid-cols-1 gap-y-6 gap-x-8 text-base font-semibold leading-7 text-white sm:grid-cols-2 md:flex lg:gap-x-10">
 							{links.map((link) => (
-								<Link target="_blank" key={link.label} href={link.href}>
-									{link.label} <span aria-hidden="true">&rarr;</span>
+								<Link
+									target="_blank"
+									key={link.label}
+									href={link.href}
+									className="group inline-flex items-center gap-1"
+								>
+									{link.label}{" "}
+									<span
+										aria-hidden="true"
+										className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-1.5"
+									>
+										&rarr;
+									</span>
 								</Link>
 							))}
 						</div>
