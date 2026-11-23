@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import { allProjects } from "@/.contentlayer/generated";
 import { Navigation } from "../../../components/nav";
 import { Redis } from "@upstash/redis";
 import type { ProjectCardData } from "@/lib/project-types";
 import { ProjectsExplorer } from "./projects-explorer";
+
+export const metadata: Metadata = {
+  title: "Projects",
+};
 
 const redis = Redis.fromEnv();
 
@@ -12,10 +17,13 @@ export default async function ProjectsPage() {
     await redis.mget<number[]>(
       ...allProjects.map((p) => ["pageviews", "projects", p.slug].join(":")),
     )
-  ).reduce((acc, v, i) => {
-    acc[allProjects[i].slug] = v ?? 0;
-    return acc;
-  }, {} as Record<string, number>);
+  ).reduce(
+    (acc, v, i) => {
+      acc[allProjects[i].slug] = v ?? 0;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const projects: ProjectCardData[] = allProjects
     .filter((project) => project.published)
@@ -34,8 +42,8 @@ export default async function ProjectsPage() {
       <Navigation />
       <div className="px-6 pt-20 mx-auto space-y-8 max-w-7xl lg:px-8 md:space-y-16 md:pt-24 lg:pt-32">
         <div className="max-w-2xl mx-auto lg:mx-0">
-          <h2 className="text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl">
-            Projects
+          <h2 className="font-display text-3xl font-bold tracking-tight text-zinc-100 sm:text-4xl">
+            Projects<span className="ml-[0.12em]" style={{ color: "#ff174f" }}>.</span>
           </h2>
           <p className="mt-4 text-zinc-400">
             My work treasure! Mostly are hobby projects, also hosted.

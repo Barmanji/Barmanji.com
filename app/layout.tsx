@@ -18,7 +18,7 @@ const calSans = LocalFont({
 export const metadata: Metadata = {
   title: {
     default: "Barmanji.com",
-    template: "%s | Barmanji.com",
+    template: "Barmanji.com | %s",
   },
   description: "Cooking in Nvim with opencode",
   openGraph: {
